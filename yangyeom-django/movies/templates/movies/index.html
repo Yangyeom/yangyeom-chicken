@@ -4,13 +4,13 @@
     <h1>영화 목록</h1>
     <h2 class="text-center">평점이 가장 높은 영화</h2>
     <a href="{% url 'movies:detail' movie_recom.pk %}">
-        <img style="width:25%" src="{{ movie_recom.poster_url }}" alt="">
+        <img style="width:25%" src="http://image.tmdb.org/t/p/w500/{{ movie_recom.poster_url }}" alt="">
     </a>
     <div class="row">
         {% for movie in movies %}
         <div class="col-4 flex-nowrap shadow">
             <a href="{% url 'movies:detail' movie.pk %}">
-                <img style="height:100%;width:100%" src="{{ movie.poster_url }}" alt="">
+                <img style="height:100%;width:100%" src="http://image.tmdb.org/t/p/w500/{{ movie.poster_url }}" alt="">
             </a>
         </div>
         {% endfor %}
