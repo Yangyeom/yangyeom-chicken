@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<h1>{{ user_detail.username }}님</h1>
+<a href="{% url 'accounts:follow' user_detail.pk %}">
+  <button class="btn btn-danger">
+    {% if user in user_detail.followers.all %}안{% endif %}좋아요
+  </button>
+</a>
+
+<h2>작성한 평점</h2>
+<ul>
+  {% for review in user_detail.review_set.all %}
+    <li><a href="{% url 'movies:detail' review.movie.pk %}">{{ review.movie.title }}: {{ review.content }} - {{ review.score }}점</a></li>
+  {% empty %}
+    <li>작성한 평점이 없습니다.</li>
+  {% endfor %}
+</ul>
+
+
+<h2>좋아하는 영화</h2>
+<ul>
+  {% for movie in user_detail.like_movies.all %}
+    <li><a href="{% url 'movies:detail' movie.pk %}">{{ movie.title }}</a></li>
+  {% empty %}
+    <li>좋아하는 영화가 없습니다.</li>
+  {% endfor %}
+</ul>
+
+<h2>팔로우: {{ user_detail.followings.count }}명, 팔로잉: {{ user_detail.followers.count }}명</h2>
+{% endblock %}
