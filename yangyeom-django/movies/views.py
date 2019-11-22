@@ -6,7 +6,7 @@ from .forms import ReviewForm
 
 # Create your views here.
 def index(request):
-    return render(request, 'movies/index.html', {'movies': Movie.objects.all(), 'movie_recom': Movie.objects.order_by('-score_avg')[0]})
+    return render(request, 'movies/index.html', {'movies': Movie.objects.all()})
 
 
 def detail(request, movie_pk):

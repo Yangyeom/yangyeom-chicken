@@ -11,5 +11,4 @@ urlpatterns = [
     path('logout/', views.logout, name='logout'),
     path('<int:user_detail_pk>/follow/', views.follow, name='follow'),
     path('rating/', views.rating, name="rating"),
-    path('display/', views.display, name="display")
 ]

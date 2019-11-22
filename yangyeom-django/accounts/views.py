@@ -8,7 +8,8 @@ from django.contrib.auth.decorators import login_required
 from movies.models import Review
 import sys
 sys.path.append("..")
-from movies.models import Movie
+from movies.models import Movie, Review
+
 
 def index(request):
     context = {
@@ -29,7 +30,7 @@ def signup(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             auth_login(request, form.save())
-            return redirect('accounts:rating')  # 홈화면으로 돌리기
+            return redirect('accounts:rating')
     else:
         form = CustomUserCreationForm()
     context = {
@@ -67,20 +68,22 @@ def follow(request, user_detail_pk):
             user_detail.followers.add(user)
     return redirect('accounts:detail', user_detail_pk)
 
-def rate(request, user_pk):
-    # 폼 오면 
-    pass
 
 def rating(request):
-    movies = Movie.objects.all()[:30]
-    context = {
-        'movies': movies
-    }
-    return render(request, 'accounts/rating.html', context)
-
-
-
-def display(request):
-    print(request.GET)
-    print(111)
-    
+    if request.method == 'GET':
+        movies = Movie.objects.all()[:30]
+        context = {
+            'movies': movies
+        }
+        return render(request, 'accounts/rating.html', context)
+    elif request.method == 'POST':
+        for k in request.POST:
+            if k == 'csrfmiddlewaretoken':
+                continue
+            if request.POST[k] == '0':
+                continue
+            movie = get_object_or_404(Movie, pk=k)
+            review = Review(user=request.user, movie=movie, score=request.POST[k])
+            review.save()
+            
+        return redirect('movies:index')
