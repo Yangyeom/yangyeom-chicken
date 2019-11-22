@@ -5,6 +5,9 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
+import sys
+sys.path.append("..")
+from movies.models import Movie
 
 def index(request):
     context = {
@@ -25,7 +28,7 @@ def signup(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             auth_login(request, form.save())
-            return redirect('accounts:index')  # 홈화면으로 돌리기
+            return redirect('accounts:rating')  # 홈화면으로 돌리기
     else:
         form = CustomUserCreationForm()
     context = {
@@ -62,3 +65,16 @@ def follow(request, user_detail_pk):
         else:
             user_detail.followers.add(user)
     return redirect('accounts:detail', user_detail_pk)
+
+
+def rating(request):
+    movies = Movie.objects.all()[:30]
+    context = {
+        'movies': movies
+    }
+    return render(request, 'accounts/rating.html', context)
+
+
+
+def display(request):
+    print(request.GET)
