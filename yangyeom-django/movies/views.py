@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Movie, Genre, Review
 from .forms import ReviewForm
+from math import sqrt
 
 
 # Create your views here.
@@ -64,8 +65,14 @@ def rate(request):
                 if movie in user_now.watched_movies.all():
                     cnt_same_movie += 1
         if cnt_same_movie >= 10:
-            numerator = 0; denominator = 0
+            numerator = 0; sigma_user = 0; sigma_user_now = 0
             for movie in user.watched_movies.all():
                 if movie in user_now.watched_movies.all():
-                    numerator += Review.filter(movie=movie, user=user)[0].score - user.score_avg
-
+                    numerator += (Review.filter(movie=movie, user=user)[0].score - user.score_avg)\
+                                    * (Review.filter(movie=movie, user=user_now)[0].score - user_now.score_avg)
+                    sigma_user += (Review.filter(movie=movie, user=user)[0].score - user.score_avg) ** 2
+                    sigma_user_now += (Review.filter(movie=movie, user=user_now)[0].score - user_now.score_avg) ** 2
+            sigma_user = sqrt(sigma_user); sigma_user_now = sqrt(sigma_user_now)
+            similarity = numerator / (sigma_user * sigma_user_now)
+            Similarity.objects.create(reference_user=user_now, similar_user=user, similarity=similarity)
+            Similarity.objects.create(reference_user=user, similar_user=user_now, similarity=similarity)
