@@ -79,7 +79,5 @@ def rating(request):
     return render(request, 'accounts/rating.html', context)
 
 
-
 def display(request):
     print(request.GET)
-    
