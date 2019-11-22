@@ -4,7 +4,7 @@ from pprint import pprint
 api_key = '4da4b6d8f14f923557de5efc46603743'
 
 tmp_list = []
-for i in range(1, 2):
+for i in range(1, 6):
     # popular movies
     url = 'https://api.themoviedb.org/3/movie/popular?api_key={}&language=ko-KR&page={}'.format(api_key, i)
     r = requests.get(url)

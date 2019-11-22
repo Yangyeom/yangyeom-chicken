@@ -5,13 +5,10 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
-<<<<<<< HEAD
 from movies.models import Review
-=======
 import sys
 sys.path.append("..")
 from movies.models import Movie
->>>>>>> e10df64bb6087a90594108ed8dc5cf885a75cea6
 
 def index(request):
     context = {
@@ -70,11 +67,9 @@ def follow(request, user_detail_pk):
             user_detail.followers.add(user)
     return redirect('accounts:detail', user_detail_pk)
 
-<<<<<<< HEAD
 def rate(request, user_pk):
     # 폼 오면 
     pass
-=======
 
 def rating(request):
     movies = Movie.objects.all()[:30]
@@ -88,4 +83,3 @@ def rating(request):
 def display(request):
     print(request.GET)
     
->>>>>>> e10df64bb6087a90594108ed8dc5cf885a75cea6

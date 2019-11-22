@@ -19,7 +19,7 @@ for movie_id in movie_ids:
     for genre in data['genres']:
         genre_tmp_list.append(genre['id'])
     movie_list.append({
-        "pk": pk,
+        "code": data['id'],
         "model": "movies.Movie",
         "fields": {
             "title": data['title'],
@@ -31,5 +31,5 @@ for movie_id in movie_ids:
     pk += 1
 
 
-with open("movie.json", "w", encoding='utf-8') as json_file:
+with open("data/movie.json", "w", encoding='utf-8') as json_file:
     json.dump(movie_list, json_file, ensure_ascii=False)
