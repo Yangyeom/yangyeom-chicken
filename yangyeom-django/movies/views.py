@@ -53,3 +53,5 @@ def like(request, movie_pk):
     else:
         movie.like_users.add(request.user)
     return redirect('movies:detail', movie_pk)
+
+
