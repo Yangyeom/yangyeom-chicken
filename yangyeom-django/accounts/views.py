@@ -5,6 +5,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
+from movies.models import Review
 
 def index(request):
     context = {
@@ -62,3 +63,7 @@ def follow(request, user_detail_pk):
         else:
             user_detail.followers.add(user)
     return redirect('accounts:detail', user_detail_pk)
+
+def rate(request, user_pk):
+    # 폼 오면 
+    pass

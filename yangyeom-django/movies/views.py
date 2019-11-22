@@ -53,3 +53,18 @@ def like(request, movie_pk):
     else:
         movie.like_users.add(request.user)
     return redirect('movies:detail', movie_pk)
+
+@login_required
+def rate(request):
+    user_now = request.user
+    for user in get_user_model().objects.all():
+        if user != user_now:
+            cnt_same_movie = 0
+            for movie in user.watched_movies.all():
+                if movie in user_now.watched_movies.all():
+                    cnt_same_movie += 1
+        if cnt_same_movie >= 10:
+            numerator = 0; denominator = 0
+            for movie in user.watched_movies.all():
+                if movie in user_now.watched_movies.all():
+                    numerator += Review.filter(movie=movie, user=user)[0].score - user.score_avg
