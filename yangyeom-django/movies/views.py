@@ -3,7 +3,10 @@ from django.contrib.auth.decorators import login_required
 from .models import Movie, Genre, Review
 from .forms import ReviewForm
 from math import sqrt
-
+from django.contrib.auth import get_user_model
+import sys
+sys.path.append("..")
+from accounts.models import Similarity
 
 # Create your views here.
 def index(request):
@@ -59,19 +62,19 @@ def like(request, movie_pk):
 def rate(request):
     user_now = request.user
     for user in get_user_model().objects.all():
-        if user != user_now:
-            cnt_same_movie = 0
-            for movie in user.watched_movies.all():
-                if movie in user_now.watched_movies.all():
-                    cnt_same_movie += 1
-        if cnt_same_movie >= 10:
+        if user == user_now: continue
+        cnt_same_movie = 0
+        for movie in user.watched_movies.all():
+            if movie in user_now.watched_movies.all():
+                cnt_same_movie += 1
+        if cnt_same_movie >= 3:
             numerator = 0; sigma_user = 0; sigma_user_now = 0
             for movie in user.watched_movies.all():
                 if movie in user_now.watched_movies.all():
-                    numerator += (Review.filter(movie=movie, user=user)[0].score - user.score_avg)\
-                                    * (Review.filter(movie=movie, user=user_now)[0].score - user_now.score_avg)
-                    sigma_user += (Review.filter(movie=movie, user=user)[0].score - user.score_avg) ** 2
-                    sigma_user_now += (Review.filter(movie=movie, user=user_now)[0].score - user_now.score_avg) ** 2
+                    numerator += (Review.objects.filter(movie=movie, user=user)[0].score - user.score_avg)\
+                                    * (Review.objects.filter(movie=movie, user=user_now)[0].score - user_now.score_avg)
+                    sigma_user += (Review.objects.filter(movie=movie, user=user)[0].score - user.score_avg) ** 2
+                    sigma_user_now += (Review.objects.filter(movie=movie, user=user_now)[0].score - user_now.score_avg) ** 2
             sigma_user = sqrt(sigma_user); sigma_user_now = sqrt(sigma_user_now)
             similarity = numerator / (sigma_user * sigma_user_now)
             Similarity.objects.create(reference_user=user_now, similar_user=user, similarity=similarity)

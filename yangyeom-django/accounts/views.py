@@ -5,6 +5,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
+from .models import User
 from movies.models import Review
 import sys
 sys.path.append("..")
@@ -77,13 +78,21 @@ def rating(request):
         }
         return render(request, 'accounts/rating.html', context)
     elif request.method == 'POST':
+        # user = get_user_model()
+        rate_score = 0
+        rate_cnt = 0
         for k in request.POST:
             if k == 'csrfmiddlewaretoken':
                 continue
             if request.POST[k] == '0':
                 continue
+            rate_score += int(request.POST[k])
+            rate_cnt += 1
             movie = get_object_or_404(Movie, pk=k)
             review = Review(user=request.user, movie=movie, score=request.POST[k])
             review.save()
+        request.user.score_total = rate_score
+        request.user.score_avg = rate_score / rate_cnt
+        request.user.save()
             
         return redirect('movies:index')

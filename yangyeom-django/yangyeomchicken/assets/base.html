@@ -28,7 +28,10 @@
       </a>
       <a href="{% url 'payments:pay' %}">
           <button class="btn btn-outline-primary">영화추천결제</button>
-        </a>
+      </a>
+      <a href="{% url 'movies:rate' %}">
+          <button class="btn btn-outline-primary">추천</button>
+      </a>
     {% else %}
       <a href="{% url 'accounts:login' %}">
         <button class="btn btn-outline-primary">로그인</button>
