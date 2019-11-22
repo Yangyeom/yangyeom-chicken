@@ -6,6 +6,14 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="star.css">
+  {% block head %}
+  {% endblock %}
+  <style>
+    body {
+      background-color: black;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -19,6 +27,9 @@
       <a href="{% url 'accounts:logout' %}">
         <button class="btn btn-outline-primary">로그아웃</button>
       </a>
+      <a href="{% url 'payments:pay' %}">
+          <button class="btn btn-outline-primary">영화추천결제</button>
+        </a>
     {% else %}
       <a href="{% url 'accounts:login' %}">
         <button class="btn btn-outline-primary">로그인</button>

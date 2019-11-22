@@ -6,6 +6,7 @@ class Genre(models.Model):
 
 
 class Movie(models.Model):
+    code = models.IntegerField(primary_key=True)
     title = models.CharField(max_length=30)
     poster_url = models.CharField(max_length=140)
     description = models.TextField()
@@ -15,6 +16,7 @@ class Movie(models.Model):
     score_avg = models.FloatField(default=0)
     watched_users = models.ManyToManyField(settings.AUTH_USER_MODEL, through=Review, related_name='watched_movies')
     # scores_per_movie = models.ManyToManyField(settings.AUTH_USER_MODEL, through=Review, related_name='scores')
+
 
 class Review(models.Model):
     content = models.CharField(max_length=100)
