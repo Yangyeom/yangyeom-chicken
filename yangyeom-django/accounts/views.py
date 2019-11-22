@@ -82,4 +82,5 @@ def rating(request):
 
 def display(request):
     print(request.GET)
+    print(111)
     
