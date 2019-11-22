@@ -59,7 +59,7 @@ def like(request, movie_pk):
     return redirect('movies:detail', movie_pk)
 
 @login_required
-def rate(request):
+def rate(request):  # 가입할 때마다!
     user_now = request.user
     for user in get_user_model().objects.all():
         if user == user_now: continue
@@ -79,3 +79,18 @@ def rate(request):
             similarity = numerator / (sigma_user * sigma_user_now)
             Similarity.objects.create(reference_user=user_now, similar_user=user, similarity=similarity)
             Similarity.objects.create(reference_user=user, similar_user=user_now, similarity=similarity)
+    
+def 
+    for movie in Movie.objects.all():
+        if movie in user_now.watched_movies.all(): continue
+        score_expected = 0; summ_similarity = 0
+        for user in get_user_model():
+            if user == user_now: continue
+            if movie in user.watched_movies.all():
+                similarity = Similarity.objects.filter(reference_user=user_now, similar_user=user).similarity
+                if similarity > 0:
+                    summ_similarity += similarity
+                    score_expected += similarity * Review.objects.filter(user=user, movie=movie).score
+        score_expected /= summ_similarity
+        # 영화별 예상 점수 어딘가에 저장하기!
+            
