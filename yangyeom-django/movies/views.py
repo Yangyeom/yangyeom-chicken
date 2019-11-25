@@ -15,7 +15,7 @@ from rest_framework.response import Response
 # def index(request):
 #     return render(request, 'movies/index.html', {'movies': Movie.objects.all()})
 @api_view(['GET'])
-def index(request):
+def movies_index(request):
     """
     영화 정보
     """
