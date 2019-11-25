@@ -36,7 +36,28 @@ def detail(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
     serializer = MovieSerializers(movie)
     return Response(serializer.data)
+# ===================================================================================================
+@api_view(['GET', 'POST'])
+def todo_index_create(request):
+    if request.method == 'GET':
+        todos = Todo.objects.all()
+        serializers = TodoSerializers(todos, many=True)
+        return Response(serializers.data)
+    else:
+        # request.POST : FormData로 POST 전송할 때 여기에 값이 들어있음
+        # request.data : FormData로 POST 전송할 경우와 data로 전송할 경우 둘다 여기에 값이 들어있음
+        serializers = TodoSerializers(data=request.data)
+        if serializers.is_valid(raise_exception=True):  # 잘못된 요청이 오면 해당 오류 메세지가 뜰 거임
+            serializers.save()
+            return Response(serializers.data)
 
+@api_view(['GET', 'POST'])
+def review(request):
+    if request.method == 'GET':
+        reviews = Review.objects.all()
+        serializers = 
+    else:
+# ===================================================================================================
 @login_required
 def review_create(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
