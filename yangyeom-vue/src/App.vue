@@ -7,6 +7,7 @@
       </div>
       <div v-else>
         <a @click.prevent="logout" href="">Logout</a>
+        <a href="">결제</a>
       </div>
     </div>
     <router-view/>
