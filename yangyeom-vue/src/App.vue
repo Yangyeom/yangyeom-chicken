@@ -3,11 +3,13 @@
     <div id="nav">
       <router-link to="/">Home</router-link> |
       <div v-if="!isAuthenticated">
-        <router-link to="/login">Login</router-link>
+        <router-link to="/signup">회원가입</router-link>
+        <router-link to="/login">로그인</router-link>
       </div>
       <div v-else>
-        <a @click.prevent="logout" href="">Logout</a>
-        <a href="">결제</a>
+        <a @click.prevent="logout" href="">로그아웃</a> | 
+        <a href="">결제</a> |
+        <a href="">영화 추천 받기</a>
       </div>
     </div>
     <router-view/>

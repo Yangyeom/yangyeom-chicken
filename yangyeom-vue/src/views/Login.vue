@@ -8,7 +8,6 @@
 <script>
 import LoginForm from '@/components/LoginForm.vue'
 import axios from 'axios'
-// 특정 폴더명으로 경로가 끝나게 되면, 폴더 내부의 index.js를 뜻함.
 import router from '../router'
 
 export default {
