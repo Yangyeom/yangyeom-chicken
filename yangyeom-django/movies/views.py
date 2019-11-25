@@ -8,7 +8,7 @@ from accounts.models import Similarity
 
 from .models import Movie, Genre, Review
 from rest_framework.decorators import api_view
-from .serializers import MovieSerializers
+from .serializers import MovieSerializers, ReviewSerializers
 from rest_framework.response import Response
 
 
@@ -28,35 +28,40 @@ def movies_index(request):
 #     form = ReviewForm()
 #     reviews = movie.review_set.all()
 #     return render(request, 'movies/detail.html', {'movie': movie, 'form': form, 'reviews': reviews, })
-@api_view(['GET'])
-def detail(request, movie_pk):
-    """
-    영화 상세 정보
-    """
-    movie = get_object_or_404(Movie, pk=movie_pk)
-    serializer = MovieSerializers(movie)
-    return Response(serializer.data)
-# ===================================================================================================
-@api_view(['GET', 'POST'])
-def todo_index_create(request):
-    if request.method == 'GET':
-        todos = Todo.objects.all()
-        serializers = TodoSerializers(todos, many=True)
-        return Response(serializers.data)
-    else:
-        # request.POST : FormData로 POST 전송할 때 여기에 값이 들어있음
-        # request.data : FormData로 POST 전송할 경우와 data로 전송할 경우 둘다 여기에 값이 들어있음
-        serializers = TodoSerializers(data=request.data)
-        if serializers.is_valid(raise_exception=True):  # 잘못된 요청이 오면 해당 오류 메세지가 뜰 거임
-            serializers.save()
-            return Response(serializers.data)
+# @api_view(['GET'])
+# def detail(request, movie_pk):
+#     """
+#     영화 상세 정보
+#     """
+#     movie = get_object_or_404(Movie, pk=movie_pk)
+#     serializer = MovieSerializers(movie)
+#     return Response(serializer.data)
+# # ===================================================================================================
+# @api_view(['GET', 'POST'])
+# def todo_index_create(request):
+#     if request.method == 'GET':
+#         todos = Todo.objects.all()
+#         serializers = TodoSerializers(todos, many=True)
+#         return Response(serializers.data)
+#     else:
+#         # request.POST : FormData로 POST 전송할 때 여기에 값이 들어있음
+#         # request.data : FormData로 POST 전송할 경우와 data로 전송할 경우 둘다 여기에 값이 들어있음
+#         serializers = TodoSerializers(data=request.data)
+#         if serializers.is_valid(raise_exception=True):  # 잘못된 요청이 오면 해당 오류 메세지가 뜰 거임
+#             serializers.save()
+#             return Response(serializers.data)
 
 @api_view(['GET', 'POST'])
-def review(request):
+def movie_reviews(request):
     if request.method == 'GET':
-        reviews = Review.objects.all()
-        serializers = 
+        review = Review.objects.filter(movie=movie)[0]
+        serializer = ReviewSerializers(review)
+        return Response(serializer.data)
     else:
+        serializer = ReviewSerializers(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializers.save()
+            return Response(serializer.data)
 # ===================================================================================================
 @login_required
 def review_create(request, movie_pk):
