@@ -57,11 +57,15 @@ def movie_reviews(request, movie_pk):
         review = Review.objects.filter(movie_id=movie_pk)
         serializer = ReviewSerializers(review, many=True)
         return Response(serializer.data)
-    # else:
-    #     serializer = ReviewSerializers(data=request.data)
-    #     if serializer.is_valid(raise_exception=True):
-    #         serializers.save()
-    #         return Response(serializer.data)
+    else:
+        
+        # request.data['movie_id'] = movie_pk
+        # print("****데이터:", request.data)
+        serializer = ReviewSerializers(data=request.data)
+        
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data)
 # ===================================================================================================
 @login_required
 def review_create(request, movie_pk):
