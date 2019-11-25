@@ -1,24 +1,41 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Movie, Genre, Review
+
 from .forms import ReviewForm
 from math import sqrt
 from django.contrib.auth import get_user_model
-import sys
-sys.path.append("..")
 from accounts.models import Similarity
 
-# Create your views here.
+from .models import Movie, Genre, Review
+from rest_framework.decorators import api_view
+from .serializers import MovieSerializers
+from rest_framework.response import Response
+
+
+# def index(request):
+#     return render(request, 'movies/index.html', {'movies': Movie.objects.all()})
+@api_view(['GET'])
 def index(request):
-    return render(request, 'movies/index.html', {'movies': Movie.objects.all()})
+    """
+    영화 정보
+    """
+    movies = Movie.objects.all()
+    serializer = MovieSerializers(movies, many=True)
+    return Response(serializer.data)
 
-
+# def detail(request, movie_pk):
+#     movie = get_object_or_404(Movie, pk=movie_pk)
+#     form = ReviewForm()
+#     reviews = movie.review_set.all()
+#     return render(request, 'movies/detail.html', {'movie': movie, 'form': form, 'reviews': reviews, })
+@api_view(['GET'])
 def detail(request, movie_pk):
+    """
+    영화 상세 정보
+    """
     movie = get_object_or_404(Movie, pk=movie_pk)
-    form = ReviewForm()
-    reviews = movie.review_set.all()
-    return render(request, 'movies/detail.html', {'movie': movie, 'form': form, 'reviews': reviews, })
-
+    serializer = MovieSerializers(movie)
+    return Response(serializer.data)
 
 @login_required
 def review_create(request, movie_pk):
@@ -59,7 +76,7 @@ def like(request, movie_pk):
     return redirect('movies:detail', movie_pk)
 
 @login_required
-def rate(request):  # 가입할 때마다!
+def evaluate_Simi(request):  # 가입할 때마다!
     user_now = request.user
     for user in get_user_model().objects.all():
         if user == user_now: continue
@@ -79,8 +96,12 @@ def rate(request):  # 가입할 때마다!
             similarity = numerator / (sigma_user * sigma_user_now)
             Similarity.objects.create(reference_user=user_now, similar_user=user, similarity=similarity)
             Similarity.objects.create(reference_user=user, similar_user=user_now, similarity=similarity)
-    
-def 
+
+
+@login_required
+def recommend(request):
+    user_now = request.user
+    movies_recom = []
     for movie in Movie.objects.all():
         if movie in user_now.watched_movies.all(): continue
         score_expected = 0; summ_similarity = 0
@@ -92,5 +113,6 @@ def
                     summ_similarity += similarity
                     score_expected += similarity * Review.objects.filter(user=user, movie=movie).score
         score_expected /= summ_similarity
-        # 영화별 예상 점수 어딘가에 저장하기!
-            
+        movies_rocom.append((movie, score_expected))
+    movies.sort(key=lambda x: x[1], reverse=True)
+    return movies[:10]
