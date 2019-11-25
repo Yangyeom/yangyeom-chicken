@@ -26,6 +26,11 @@
             <h6>{{review.content}}</h6>
             <hr>
         </div>
+        <form @submit.prevent="">
+          <star-rating v-model="score_rating" :glow="10" :show-rating="true" :increment="0.5" :border-width="1" border-color="#d8d8d8" :rounded-corners="true" :star-points="[23,2, 14,17, 0,19, 10,34, 7,50, 23,43, 38,50, 36,34, 46,19, 31,17]"/>
+          <input type="text" v-model="content_rating" @change="save">
+          <button type="submit">확인</button>
+        </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -38,33 +43,55 @@
 <script>
 import axios from 'axios'
 import { mapGetters } from 'vuex'
+import StarRating from 'vue-star-rating'
 
 export default {
   name: 'movie-list-item-modal',
-  // 0. props 데이터를 받이 위하여 설정하시오.
-  // movie 타입은 Object이며, 필수입니다.
-  // 설정이 완료 되었다면, 상위 컴포넌트에서 값을 넘겨 주세요.
-  // 그리고 적절한 곳에 사용하세요.
-  props: {
-    movie: {
-      type: Object,
-      required: true,
-    }
-  },
-  data() {
-      return {
-          poster_url: `http://image.tmdb.org/t/p/w500/${this.movie.poster_url}`,
-          reviews: [],
-      }
-  },
   computed: {
     ...mapGetters([
       'options',
       'user'
     ])
   },
+  props: {
+    movie: {
+      type: Object,
+      required: true,
+    }
+  },
+  components: {
+    StarRating
+  },
+  data() {
+      return {
+          poster_url: `http://image.tmdb.org/t/p/w500/${this.movie.poster_url}`,
+          reviews: [],
+          content_rating: '',
+          score_rating: 0,
+      }
+  },
+  methods: {
+    save() {
+      const review = {
+        content: this.content_rating,
+        score: this.score_rating,
+        user: this.user,  // 맞는지 모르겠어요
+        movie: this.movie
+      }
+      this.reviews.push(review)
+      console.log(review)
+      console.log(this.user)
+      axios.post(`http://127.0.0.1:8000/api/v1/movie/${this.movie.code}/reviews/`, review, this.options)
+        .then(response => {
+          console.log(response)
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    }
+  },
   mounted(){
-      axios.get(`http://127.0.0.1:8000/api/v1/movies/${this.movie.code}/`, this.options)
+      axios.get(`http://127.0.0.1:8000/api/v1/movie/${this.movie.code}/reviews/`, this.options)
         .then(response => {
             this.reviews = response.data
         })
