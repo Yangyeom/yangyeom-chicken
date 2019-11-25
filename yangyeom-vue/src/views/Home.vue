@@ -1,18 +1,47 @@
 <template>
-  <Movie class="movie"/>
+  <div class="home">
+    <MovieList/>
+  </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import Movie from '@/components/Movie.vue'
+import router from '../router'
+import axios from 'axios'
+import MovieList from '@/components/MovieList.vue'
+
 
 export default {
   name: 'home',
   components: {
-    Movie
+    MovieList,
   },
   data() {
-    return {}
+    return {
+      movies: [],
+    }
+  },
+  methods: {
+    getMovies(){
+      axios.get('http://127.0.0.1:8000/api/v1/movies/')
+        .then(response => {
+          console.log(response)
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+    isLogined(){
+      this.$session.start()
+      if (!this.$session.has('jwt')){
+        router.push('/login')
+      } else {
+        this.$store.dispatch('login', this.$session.get('jwt'))
+      }
+    }
+  },
+  mounted() {
+    this.isLogined()
   }
 }
 </script>
