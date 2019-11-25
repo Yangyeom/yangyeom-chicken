@@ -22,8 +22,9 @@
         <hr>
         <div v-for="review in reviews" :key="review.id">
             <h6>{{review.score}}</h6>
-            <h6>{{review.user}}</h6>
+            <h6>{{review.username}}</h6>
             <h6>{{review.content}}</h6>
+            <hr>
         </div>
       </div>
       <div class="modal-footer">
@@ -36,6 +37,7 @@
 
 <script>
 import axios from 'axios'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'movie-list-item-modal',
@@ -55,8 +57,14 @@ export default {
           reviews: [],
       }
   },
+  computed: {
+    ...mapGetters([
+      'options',
+      'user'
+    ])
+  },
   mounted(){
-      axios.get(`http://127.0.0.1:8000/api/v1/movies/${this.movie.code}`, this.options)
+      axios.get(`http://127.0.0.1:8000/api/v1/movies/${this.movie.code}/`, this.options)
         .then(response => {
             this.reviews = response.data
         })
