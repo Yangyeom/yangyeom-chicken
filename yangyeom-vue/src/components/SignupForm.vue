@@ -1,73 +1,50 @@
 <template>
-  <div id="app">
   <div class="container">
-    <form>
-      <div class="row">
-        <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
-          <!-- Exercise 1 -->
-          <!-- Create a Signup Form where you retrieve the following Information -->
-          <!-- Full Name (First Name + Last Name) -->
-          <!-- Mail -->
-          <!-- Password -->
-          <!-- Store Data? Yes/No -->
-          <h1>Signup</h1>
-          <hr>
-          <div class="form-group">
-            <label for="firstName">아이디</label>
-            <input type="text" id="firstName" class="form-control" v-model="userData.firstName">
-          </div>
-          <div class="form-group">
-            <label for="password">비밀번호</label>
-            <input type="password" id="password" class="form-control" v-model="userData.password">
-            <p>
-              {{ userData.password }}
-            </p>
-          </div>
-          <div class="form-group">
-            <label for="password">비밀번호 재확인</label>
-            <input type="password" id="password" class="form-control" v-model="userData.password">
-            <p>
-              {{ userData.password }}
-            </p>
-          </div>
+    <form @submit.prevent="signup">
+        <h1>Signup</h1>
+        <hr>
+        <div class="form-group text-center">
+          <label for="username">아이디</label>
+          <input type="text" id="username" class="form-control" v-model="credentials.id">
         </div>
-      </div>
+        <div class="form-group text-center">
+          <label for="password">비밀번호</label>
+          <input type="password" id="password" class="form-control" v-model="credentials.password">
+        </div>
+        <div class="form-group text-center">
+          <label for="password2">비밀번호 재확인</label>
+          <input type="password" id="password2" class="form-control" v-model="password2">
+        </div>
       <hr>
-      <div class="row">
-        <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
-          <button class="btn btn-primary" @click.prevent="submitted">Submit!
-          </button>
-        </div>
-      </div>
+      <button class="btn btn-primary" type="submit">회원가입</button>
     </form>
   </div>
-</div>
 
 </template>
 
 <script>
-export default {
+  export default {
     name: 'SignupForm',
-    data(){
-        return {
-            userData: {
-                firstName: '',
-                lastName: '',
-                email: '',
-                password: ''
-            },
-            storeData: 'Yes',
-            isSubmitted: false
-        }
+    data() {
+      return {
+        credentials: {},
+        password2: ''
+      }
     },
     methods: {
-    submitted() {
-      this.isSubmitted = true;
+        signup(){
+            if(this.credentials.password === this.password2){
+              this.password2 = ''
+              this.$emit('signup-event', this.credentials)
+              this.credentials = {}
+            } else {
+              this.credentials.password = '',
+              this.password2 = ''
+            }
+        }
     }
   }
-}
 </script>
 
 <style>
-
 </style>
