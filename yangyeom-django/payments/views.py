@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 import requests
+from django.http import HttpResponse
 from decouple import config
 from .models import Payment
 
@@ -45,10 +46,11 @@ def pay(request):
         'cancel_url': 'http://127.0.0.1:8000/payments/cancel/',
     }
     data = req('/v1/payment/ready', '', params)
-    print(data)
+    # print(data)
     tid = data['tid']
 
-    return redirect(data['next_redirect_pc_url'])
+    # return redirect(data['next_redirect_pc_url'])
+    return HttpResponse(data['next_redirect_pc_url'], status=201)
 
 
 # 결제 성공(승인)

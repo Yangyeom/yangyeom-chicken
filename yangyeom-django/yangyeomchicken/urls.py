@@ -24,5 +24,6 @@ urlpatterns = [
     path('api/v1/', include('movies.urls')),
     path('payments/', include('payments.urls')),
 
-    path('api-token-auth/', obtain_jwt_token)
+    path('api-token-auth/', obtain_jwt_token),
+    path('api-token-auth/registration/', obtain_jwt_token),
 ]
