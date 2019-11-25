@@ -1,11 +1,12 @@
 <template>
   <div class="home">
-    <MovieList/>
+    <MovieList :movies="movies"/>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
+import { mapGetters } from 'vuex'
 import router from '../router'
 import axios from 'axios'
 import MovieList from '@/components/MovieList.vue'
@@ -21,11 +22,18 @@ export default {
       movies: [],
     }
   },
+  computed: {
+    ...mapGetters([
+      'options',
+      'user'
+    ])
+  },
   methods: {
     getMovies(){
-      axios.get('http://127.0.0.1:8000/api/v1/movies/')
+      axios.get('http://127.0.0.1:8000/api/v1/movies/', this.options)
         .then(response => {
           console.log(response)
+          this.movies = response.data
         })
         .catch(error => {
           console.log(error)
@@ -42,6 +50,7 @@ export default {
   },
   mounted() {
     this.isLogined()
+    this.getMovies()
   }
 }
 </script>
