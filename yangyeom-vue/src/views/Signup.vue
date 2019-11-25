@@ -10,6 +10,10 @@ import SignupForm from '@/components/SignupForm.vue'
 import axios from 'axios'
 // import router from '../router'
 
+axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+axios.defaults.headers.common['X-REQUESTED-WITH'] = 'XMLHttpRequest'
+
 export default {
     name: 'Signup',
     components: {
@@ -17,10 +21,10 @@ export default {
     },
     methods: {
         signup(credentials) {
-            axios.post('http://127.0.0.1:8000/api-token-auth/', credentials)
+            axios.post('http://127.0.0.1:8000/accounts/signup/', credentials)
                 .then(response =>{
                     console.log(response)
-
+                    
                     // const token = response.data.token
                     // this.$session.start()
                     // this.$session.set('jwt', token)

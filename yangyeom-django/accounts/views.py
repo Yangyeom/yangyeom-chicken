@@ -1,10 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model
 from .forms import CustomUserCreationForm
+from django.http import HttpResponse
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
+from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view, permission_classes
 from .models import User
 from movies.models import Review
 from movies.models import Movie, Review
@@ -22,20 +25,19 @@ def detail(request, user_pk):
     }
     return render(request, 'accounts/detail.html', context)
 
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
 def signup(request):
     if request.user.is_authenticated:
         return redirect('accounts:index')  # 홈화면으로 돌리기
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
+        user_check = get_user_model().objects.get(username=request.data['id'])
+        print(user_check)
         if form.is_valid():
-            auth_login(request, form.save())
-            return redirect('accounts:rating')
-    else:
-        form = CustomUserCreationForm()
-    context = {
-        'form': form
-    }
-    return render(request, 'accounts/form.html', context)
+            form.save()
+            return HttpResponse('401401401401', status=200)
+    return HttpResponse('401401401401', status=401)
 
 def login(request):
     if request.user.is_authenticated:
