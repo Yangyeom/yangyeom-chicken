@@ -7,8 +7,6 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from .models import User
 from movies.models import Review
-import sys
-sys.path.append("..")
 from movies.models import Movie, Review
 
 
