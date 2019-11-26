@@ -9,10 +9,10 @@ class GenreSerializers(serializers.ModelSerializer):
 
 
 class ReviewSerializers(serializers.ModelSerializer):
-    # username = serializers.CharField(read_only=True, source='user.username')
+    username = serializers.CharField(read_only=True, source='user.username')
     class Meta:
         model = Review
-        fields = ['score', 'content', 'user', 'movie']
+        fields = ['id', 'score', 'content', 'user', 'username', 'movie']
 
 
 
