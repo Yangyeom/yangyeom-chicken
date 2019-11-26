@@ -7,6 +7,7 @@
 <script>
 // @ is an alias to /src
 import { mapGetters } from 'vuex'
+// import router from '../router'
 import axios from 'axios'
 import MovieList from '@/components/MovieList.vue'
 
