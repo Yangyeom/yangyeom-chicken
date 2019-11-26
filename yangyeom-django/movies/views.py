@@ -67,15 +67,24 @@ def movie_reviews(request, movie_pk):
         serializer = ReviewSerializers(review, many=True)
         return Response(serializer.data)
     else:
-        
-        # request.data['movie_id'] = movie_pk
         # print("****데이터:", request.data)
         serializer = ReviewSerializers(data=request.data)
-        
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
+            review = serializer.save()
+            review.movie.watched_users.add(review.user)
+            # print('요청 보내짐')
             return Response(serializer.data)
 # ===================================================================================================
+@api_view(['PUT', 'DELETE'])
+def review_update_delete(request, movie_pk, review_pk):
+    if request.method == 'PUT':
+        pass
+    else:
+        print('요청받음')
+        review = Review.objects.get(pk=review_pk)
+        review.delete()
+        return Response('삭제되었습니다')
+
 @login_required
 def review_create(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
