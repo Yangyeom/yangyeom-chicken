@@ -20,12 +20,12 @@
         <!-- <h6>{{review.username}}</h6>
             <h6>{{review.score}}</h6>
             <h6>{{review.content}}</h6>
-            <button @click="review_delete(review.id)">삭제</button> -->
-            <hr>
+            <button @click="W(review.id)">삭제</button> -->
+        <hr>
         <div v-for="review in reviews" :key="review.id">
             <h4>{{review.score}}</h4>
             <h6>{{review.username}} | {{review.content}}</h6>
-            <button @click="review_delete(review.id)">삭제</button>
+            <button v-if="writerCheck(review.user)" @click="reviewDelete(review.id)">삭제</button>
             <hr>
         </div>
         <form @submit.prevent="">
@@ -97,7 +97,10 @@ export default {
         })
     },
     reviewDelete(review_id) {
-      axios.delete(`http://127.0.0.1:8000/api/v1/movie/${this.movie.code}/reviews/${review_id}/`, this.user, this.options)
+      let conf = this.options
+      conf.user = this.user
+      console.log(conf)
+      axios.delete(`http://127.0.0.1:8000/api/v1/movie/${this.movie.code}/reviews/${review_id}/`, conf)
         .then(response => {
             console.log(response)
             this.reviews = this.reviews.filter(review => review.id !== review_id)
@@ -107,6 +110,8 @@ export default {
         })
     },
     writerCheck(writer) {
+      console.log(writer)
+      console.log('d',this.user)
       return writer === this.user
     }
   },

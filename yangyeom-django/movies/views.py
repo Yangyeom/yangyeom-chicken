@@ -82,14 +82,20 @@ def movie_reviews(request, movie_pk):
 
 @api_view(['PUT', 'DELETE'])
 def review_update_delete(request, movie_pk, review_pk):
-    if request.method == 'PUT':
-        pass
+    review = Review.objects.get(pk=review_pk)
+    print(request.user)
+    print(review.user)
+    if request.user == review.user:
+        if request.method == 'PUT':
+            pass
+        else:
+            print('요청받음')
+            print(request.user)
+            
+            review.delete()
+            return Response('삭제되었습니다')
     else:
-        print('요청받음')
-        print(request.data)
-        review = Review.objects.get(pk=review_pk)
-        review.delete()
-        return Response('삭제되었습니다')
+        return Response('리뷰 작성자가 아닙니다.')
 
 
 @login_required
