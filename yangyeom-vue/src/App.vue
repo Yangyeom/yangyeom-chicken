@@ -39,7 +39,7 @@ export default {
       router.push('/login')
     },
     payment(){
-      axios.get('http://127.0.0.1:8000/payments/pay/', this.user)
+      axios.get(`http://127.0.0.1:8000/payments/pay/${this.user}/`)
         .then(response => {
           let win = window.open(response.data['next_redirect_pc_url'], '_blank');
           win.focus();

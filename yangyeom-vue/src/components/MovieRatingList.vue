@@ -2,8 +2,8 @@
     <div class="container flex-nowrap justify-content-center text-center bg-dark shadow text-shadow">
         <h1>영화 목록</h1>
         <div class="row">
-            <div v-for="movie in movies" :key="movie.id" class="col-2 flex-nowrap shadow">
-                <MovieRatingListItem :movie="movie"/>
+            <div v-for="movie in movies" :key="movie.code" class="col-2 flex-nowrap shadow">
+                <MovieRatingListItem :movie_id="movie.code" @cntUp="cntUp" :movie="movie"/>
             </div>
         </div>
     </div>
@@ -26,6 +26,12 @@ export default {
         movies: {
             type: Array,
             required: true
+        }
+    },
+    methods: {
+        cntUp() {
+            console.log("list")
+            this.$emit('cntUp')
         }
     }
 }

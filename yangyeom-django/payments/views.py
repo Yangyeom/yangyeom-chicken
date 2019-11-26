@@ -4,12 +4,14 @@ import json
 from django.http import HttpResponse
 from decouple import config
 from .models import Payment
+from django.contrib.auth import get_user_model
 
 
 KEY = config('KAKAO_API_KEY')
 API_HOST = 'https://kapi.kakao.com'
 headers = {'Authorization': f'KakaoAK {KEY}'}
 tid = 0
+user = -1
 
 def req(path, query, data={}):
     url = API_HOST + path
@@ -28,14 +30,16 @@ def index(request):
 
 
 # 결제 요청
-def pay(request):
+def pay(request, user_id):
     # order example
     global tid
-    print('pay:', request.user)
+    global user
+    user = user_id
+
     params = {
         'cid': 'TC0ONETIME',
         'partner_order_id': '19283432',
-        'partner_user_id': '4211',
+        'partner_user_id': user,
         'item_name': 'Coke 영화추천서비스이용 결제',
         'item_code': 'a123',
         'quantity': 1,
@@ -57,25 +61,24 @@ def pay(request):
 # 결제 성공(승인)
 def success(request):
     global tid
+    global user
 
     params = {
         'cid': 'TC0ONETIME',
         'tid': tid,
         'partner_order_id': '19283432',
-        'partner_user_id': '4211',
+        'partner_user_id': user,
         'pg_token': request.GET.get('pg_token'),
     }
 
     data = req('/v1/payment/approve', '', params)
-    print(request.user)
+
+    User = get_user_model().objects.get(id=user)
+    User.paid = True
+    User.save()
     payment = Payment(aid=data['aid'], tid=data['tid'], payment_method_type=data['payment_method_type'],
                 item_name=data['item_name'], item_code=['item_code'], amount=data['amount']['total'],
-                created_at=data['created_at'], approved_at=data['approved_at'])
+                created_at=data['created_at'], approved_at=data['approved_at'], user=User)
     payment.save()
 
-    context = {
-        'item_name': payment.item_name,
-        'amount': payment.amount,
-    }
-
-    return render(request, 'payments/success.html', context)
+    return render(request, 'payments/success.html')
