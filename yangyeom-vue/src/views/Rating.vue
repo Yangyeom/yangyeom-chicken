@@ -1,5 +1,6 @@
 <template>
   <div class="rating">
+    <h1>열 개의 영화를 평가해주세요!</h1>
     <MovieRatingList :movies="movies"/>
   </div>
 </template>
