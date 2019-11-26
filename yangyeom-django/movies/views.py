@@ -7,7 +7,8 @@ from django.contrib.auth import get_user_model
 from accounts.models import Similarity
 
 from .models import Movie, Genre, Review
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from .serializers import MovieSerializers, ReviewSerializers
 from rest_framework.response import Response
 
@@ -15,6 +16,7 @@ from rest_framework.response import Response
 # def index(request):
 #     return render(request, 'movies/index.html', {'movies': Movie.objects.all()})
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def movies_index(request):
     """
     영화 정보
@@ -24,6 +26,7 @@ def movies_index(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def movies_rating(request):
     """
     평가할 영화 정보
@@ -61,6 +64,7 @@ def movies_rating(request):
 #             return Response(serializers.data)
 
 @api_view(['GET', 'POST'])
+@permission_classes([AllowAny])
 def movie_reviews(request, movie_pk):
     if request.method == 'GET':
         review = Review.objects.filter(movie_id=movie_pk)
@@ -75,6 +79,7 @@ def movie_reviews(request, movie_pk):
             # print('요청 보내짐')
             return Response(serializer.data)
 
+
 @api_view(['PUT', 'DELETE'])
 def review_update_delete(request, movie_pk, review_pk):
     if request.method == 'PUT':
@@ -85,7 +90,7 @@ def review_update_delete(request, movie_pk, review_pk):
         review = Review.objects.get(pk=review_pk)
         review.delete()
         return Response('삭제되었습니다')
-# ===================================================================================================
+
 
 @login_required
 def review_create(request, movie_pk):

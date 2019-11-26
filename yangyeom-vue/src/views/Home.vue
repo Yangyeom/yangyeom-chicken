@@ -7,7 +7,6 @@
 <script>
 // @ is an alias to /src
 import { mapGetters } from 'vuex'
-import router from '../router'
 import axios from 'axios'
 import MovieList from '@/components/MovieList.vue'
 
@@ -41,15 +40,13 @@ export default {
     },
     isLogined(){
       this.$session.start()
-      if (!this.$session.has('jwt')){
-        router.push('/login')
-      } else {
+      if (this.$session.has('jwt')){
         this.$store.dispatch('login', this.$session.get('jwt'))
       }
     }
   },
   mounted() {
-    // this.isLogined()
+    this.isLogined()
     this.getMovies()
   }
 }
