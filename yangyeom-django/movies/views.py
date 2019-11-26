@@ -80,17 +80,17 @@ def movie_reviews(request, movie_pk):
             return Response(serializer.data)
 
 
-
-# ===================================================================================================
 @api_view(['PUT', 'DELETE'])
 def review_update_delete(request, movie_pk, review_pk):
     if request.method == 'PUT':
         pass
     else:
         print('요청받음')
+        print(request.data)
         review = Review.objects.get(pk=review_pk)
         review.delete()
         return Response('삭제되었습니다')
+
 
 @login_required
 def review_create(request, movie_pk):

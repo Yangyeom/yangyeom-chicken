@@ -96,8 +96,8 @@ export default {
           console.log(error)
         })
     },
-    review_delete(review_id) {
-      axios.delete(`http://127.0.0.1:8000/api/v1/movie/${this.movie.code}/reviews/${review_id}/`, this.options)
+    reviewDelete(review_id) {
+      axios.delete(`http://127.0.0.1:8000/api/v1/movie/${this.movie.code}/reviews/${review_id}/`, this.user, this.options)
         .then(response => {
             console.log(response)
             this.reviews = this.reviews.filter(review => review.id !== review_id)
@@ -105,6 +105,9 @@ export default {
         .catch(error => {
             console.log(error)
         })
+    },
+    writerCheck(writer) {
+      return writer === this.user
     }
   },
   mounted(){
