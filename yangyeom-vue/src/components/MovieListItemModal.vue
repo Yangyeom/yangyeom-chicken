@@ -33,12 +33,13 @@
             <hr>
           <!-- </div> -->
         </div>
-        
-          <star-rating v-model="score_rating" :glow="10" :show-rating="false" :increment="0.5" :border-width="1" border-color="#d8d8d8" :rounded-corners="true" :star-points="[23,2, 14,17, 0,19, 10,34, 7,50, 23,43, 38,50, 36,34, 46,19, 31,17]"/>
-        <form @submit.prevent="">
-          <input type="text" v-model="content_rating" :placeholder="reviewPlaceholder" @change="save">
-          <button type="submit">확인</button>
-        </form>
+        <div v-if="isLogined">
+            <star-rating v-model="score_rating" :glow="10" :show-rating="false" :increment="0.5" :border-width="1" border-color="#d8d8d8" :rounded-corners="true" :star-points="[23,2, 14,17, 0,19, 10,34, 7,50, 23,43, 38,50, 36,34, 46,19, 31,17]"/>
+          <form @submit.prevent="">
+            <input type="text" v-model="content_rating" :placeholder="reviewPlaceholder" @change="save">
+            <button type="submit">확인</button>
+          </form>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -113,6 +114,7 @@ export default {
         .catch(error => {
             console.log(error)
         })
+      this.content_rating = ''
     },
     writerCheck(writer) {
       // console.log('리뷰주인', writer)
@@ -144,17 +146,20 @@ export default {
       'user'
     ]),
     ifIRated() {
-      const a = this.reviews.filter(review => review.user === this.user).length !== 0
       // console.log(this.movie.title, '에서 ifIRated', a)
-      return a
+      return this.reviews.filter(review => review.user === this.user).length !== 0
     },
     myReview() {
       return this.reviews.filter(review => review.user === this.user)
     },
     reviewPlaceholder() {
-      return this.ifIRated? '재평가하려면 리뷰를 삭제하세요': '평가해주세요'
+      return this.isLogined? (this.ifIRated? '재평가하려면 리뷰를 삭제하세요': '평가해주세요') : '로그인해주세요'
+    },
+    isLogined(){
+      this.$session.start()
+      return this.$session.has('jwt')
     }
-  },
+  }
 }
 </script>
 
