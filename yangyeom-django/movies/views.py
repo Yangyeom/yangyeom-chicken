@@ -67,16 +67,24 @@ def movies_rating(request):
 @permission_classes([AllowAny])
 def movie_reviews(request, movie_pk):
     if request.method == 'GET':
-        review = Review.objects.filter(movie_id=movie_pk)
-        serializer = ReviewSerializers(review, many=True)
-        return Response(serializer.data)
+        print('영화 정보 가져오기', request.user)
+        rated = False
+        reviews = Review.objects.filter(movie_id=movie_pk)
+        # for review in reviews:
+        #     if request.user == review.user:
+        #         rated = True
+        #         break
+        serializers = ReviewSerializers(reviews, many=True)
+        # serializers.data.append(rated)
+        # print('serializers', serializers.data)
+        return Response(serializers.data)
     else:
-        # print("****데이터:", request.data)
+        print("****데이터:", request.data)
         serializer = ReviewSerializers(data=request.data)
         if serializer.is_valid(raise_exception=True):
             review = serializer.save()
             review.movie.watched_users.add(review.user)
-            # print('요청 보내짐')
+            print('요청 보내짐')
             return Response(serializer.data)
 
 
