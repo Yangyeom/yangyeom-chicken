@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 import requests
+import json
 from django.http import HttpResponse
 from decouple import config
 from .models import Payment
@@ -30,27 +31,27 @@ def index(request):
 def pay(request):
     # order example
     global tid
-
+    print('pay:', request.user)
     params = {
         'cid': 'TC0ONETIME',
         'partner_order_id': '19283432',
         'partner_user_id': '4211',
-        'item_name': 'Paprika Hotel Single Room',
+        'item_name': 'Coke 영화추천서비스이용 결제',
         'item_code': 'a123',
         'quantity': 1,
-        'total_amount': 323900,
-        'vat_amount': 32390,
+        'total_amount': 4900,
+        'vat_amount': 490,
         'tax_free_amount': 0,
         'approval_url': 'http://127.0.0.1:8000/payments/success/',
         'fail_url': 'http://127.0.0.1:8000/payments/fail/',
         'cancel_url': 'http://127.0.0.1:8000/payments/cancel/',
     }
     data = req('/v1/payment/ready', '', params)
-    # print(data)
     tid = data['tid']
 
     # return redirect(data['next_redirect_pc_url'])
-    return HttpResponse(data['next_redirect_pc_url'], status=201)
+    data = json.dumps(data)
+    return HttpResponse(data, status=201)
 
 
 # 결제 성공(승인)
@@ -64,9 +65,9 @@ def success(request):
         'partner_user_id': '4211',
         'pg_token': request.GET.get('pg_token'),
     }
-    print(params)
-    data = req('/v1/payment/approve', '', params)
 
+    data = req('/v1/payment/approve', '', params)
+    print(request.user)
     payment = Payment(aid=data['aid'], tid=data['tid'], payment_method_type=data['payment_method_type'],
                 item_name=data['item_name'], item_code=['item_code'], amount=data['amount']['total'],
                 created_at=data['created_at'], approved_at=data['approved_at'])

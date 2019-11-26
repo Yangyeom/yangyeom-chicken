@@ -23,6 +23,15 @@ def movies_index(request):
     serializer = MovieSerializers(movies, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def movies_rating(request):
+    """
+    평가할 영화 정보
+    """
+    movies = Movie.objects.all()[:30]
+    serializer = MovieSerializers(movies, many=True)
+    return Response(serializer.data)
+
 # def detail(request, movie_pk):
 #     movie = get_object_or_404(Movie, pk=movie_pk)
 #     form = ReviewForm()

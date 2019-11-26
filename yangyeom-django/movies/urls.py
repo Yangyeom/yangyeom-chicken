@@ -16,6 +16,7 @@ app_name = 'movies'
 urlpatterns = [
     path('movies/', views.movies_index, name='movies_index'),
     path('movie/<int:movie_pk>/reviews/', views.movie_reviews, name='movie_reviews'),
+    path('movies/rating/', views.movies_rating, name="movies_rating"),
     path('movie/<int:movie_pk>/reviews/<int:review_pk>/', views.review_update_delete, name='review_update_delete'),
     #=================================================================================
     path('<int:movie_pk>/reviews/new/', views.review_create, name='review_create'),

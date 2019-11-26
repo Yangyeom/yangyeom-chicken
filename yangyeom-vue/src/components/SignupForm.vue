@@ -5,7 +5,7 @@
         <hr>
         <div class="form-group text-center">
           <label for="username">아이디</label>
-          <input type="text" id="username" class="form-control" v-model="credentials.id">
+          <input type="text" id="username" class="form-control" v-model="credentials.username">
         </div>
         <div class="form-group text-center">
           <label for="password">비밀번호</label>

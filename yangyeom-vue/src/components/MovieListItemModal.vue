@@ -1,11 +1,8 @@
 <template>
-<!-- vue 콘솔에서 확인하여, 추가 정보들도 출력하세요. -->
-<!-- 고유한 모달을 위해 id 속성을 정의하시오. 예) movie-1, movie-2, ... -->
 <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" :id="'movie-' + movie.code">
   <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <!-- 영화 제목을 출력하세요. -->
         <h5 class="modal-title">{{ movie.title }}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>

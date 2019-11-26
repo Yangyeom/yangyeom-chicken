@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     getMovies(){
-      axios.get('http://127.0.0.1:8000/api/v1/movies/', this.options)
+      axios.get('http://127.0.0.1:8000/api/v1/movies/')
         .then(response => {
           console.log(response)
           this.movies = response.data
@@ -49,7 +49,7 @@ export default {
     }
   },
   mounted() {
-    this.isLogined()
+    // this.isLogined()
     this.getMovies()
   }
 }

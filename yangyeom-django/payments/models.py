@@ -1,4 +1,6 @@
 from django.db import models
+from django.conf import settings
+
 
 # Create your models here.
 class Payment(models.Model):
@@ -10,6 +12,7 @@ class Payment(models.Model):
     amount = models.IntegerField()
     created_at = models.DateTimeField()
     approved_at = models.DateTimeField()
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
 
 # aid	Request 고유 번호	String
