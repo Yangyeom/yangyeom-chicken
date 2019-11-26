@@ -18,6 +18,6 @@ class Movie(models.Model):
 
 class Review(models.Model):
     content = models.CharField(max_length=100, blank=True)
-    score = models.IntegerField()
+    score = models.FloatField()
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
