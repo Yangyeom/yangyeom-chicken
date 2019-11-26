@@ -142,8 +142,7 @@ CORS_ORIGIN_WHITELIST = [
 REST_FRAMEWORK = {
     # 모든 views.py : 반드시 인증되어야한다. (IsAuthenticated) 
     'DEFAULT_PERMISSION_CLASSES': (
-        # 'rest_framework.permissions.IsAuthenticated',
-        # 이거 끄고 한 번 리뷰작성 해보기
+        'rest_framework.permissions.IsAuthenticated',
     ),
     # 모든 views.py : 인증을 JWT 혹은 Session 등을 통해서 인증된다.
     'DEFAULT_AUTHENTICATION_CLASSES': (

@@ -20,10 +20,16 @@
       </div>
       <div class="modal-body">
         <hr>
-        <div v-for="review in reviews" :key="review.id">
+        <h6>{{review.username}}</h6>
             <h6>{{review.score}}</h6>
-            <h6>{{review.username}}</h6>
             <h6>{{review.content}}</h6>
+            <button @click="review_delete(review.id)">삭제</button>
+            <hr>
+        <div v-for="review in reviews" :key="review.id">
+            <h6>{{review.username}}</h6>
+            <h6>{{review.score}}</h6>
+            <h6>{{review.content}}</h6>
+            <button  @click="review_delete(review.id)">삭제</button>
             <hr>
         </div>
         <form @submit.prevent="">
@@ -72,21 +78,35 @@ export default {
   },
   methods: {
     save() {
-      const review = {
+      const data = {
         content: this.content_rating,
         score: this.score_rating,
-        user: this.user,  // 맞는지 모르겠어요
-        movie: this.movie
+        user: this.user,
+        movie: this.movie.code
       }
-      this.reviews.push(review)
-      console.log(review)
-      console.log(this.user)
-      axios.post(`http://127.0.0.1:8000/api/v1/movie/${this.movie.code}/reviews/`, review, this.options)
+      axios.post(`http://127.0.0.1:8000/api/v1/movie/${this.movie.code}/reviews/`, data, this.options)
         .then(response => {
           console.log(response)
+          const review = {
+            content: response.data.content,
+            score: response.data.score,
+            username: response.data.username,
+          }
+          this.reviews.push(review)
+          console.log('리뷰들', this.reviews)
         })
         .catch(error => {
           console.log(error)
+        })
+    },
+    review_delete(review_id) {
+      axios.delete(`http://127.0.0.1:8000/api/v1/movie/${this.movie.code}/reviews/${review_id}/`, this.options)
+        .then(response => {
+            console.log(response)
+            this.reviews = this.reviews.filter(review => review.id !== review_id)
+        })
+        .catch(error => {
+            console.log(error)
         })
     }
   },
