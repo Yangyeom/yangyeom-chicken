@@ -32,9 +32,9 @@ def signup(request):
     if request.user.is_authenticated:
         return redirect('accounts:index')  # 홈화면으로 돌리기
     if request.method == 'POST':
-        user_check = get_user_model().objects.filter(username = request.data['id']).count()
+        user_check = get_user_model().objects.filter(username = request.data['username']).count()
         if user_check == 0:
-            User.objects.create_user(username=request.data['id'], password=request.data['password'])
+            User.objects.create_user(username=request.data['username'], password=request.data['password'])
             return HttpResponse('Saved', status=201)
     return HttpResponse('Unauthorized', status=401)
 

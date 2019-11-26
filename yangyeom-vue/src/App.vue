@@ -18,8 +18,15 @@
 <script>
 import router from './router'
 import axios from 'axios'
+import { mapGetters } from 'vuex'
 export default {
   name: 'App',
+  computed: {
+    ...mapGetters([
+      'options',
+      'user'
+    ])
+  },
   data(){
     return {
       isAuthenticated: this.$session.has('jwt')
@@ -32,13 +39,10 @@ export default {
       router.push('/login')
     },
     payment(){
-      axios.get('http://127.0.0.1:8000/payments/pay/')
+      axios.get('http://127.0.0.1:8000/payments/pay/', this.user)
         .then(response => {
-          console.log(response)
-          axios.get(response.data)
-            .then(response2 => {
-              console.log(response2)
-            })
+          let win = window.open(response.data['next_redirect_pc_url'], '_blank');
+          win.focus();
         })
         .catch(error => {
           console.log(error)
