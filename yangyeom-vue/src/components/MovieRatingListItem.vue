@@ -31,7 +31,7 @@ export default {
       required: true,
     },
     movie_id: {
-        type: String,
+        type: Number,
         required: true
     }
   },

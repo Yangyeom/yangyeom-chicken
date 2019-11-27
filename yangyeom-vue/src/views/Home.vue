@@ -1,6 +1,10 @@
 <template>
   <div class="home">
+
       <Cover/>
+      <button @click="getRecommendation">테스트</button>
+      <RecommendedList :recommended="recommended"/>
+      <h1>위에꺼가 추천받은거</h1>
       <MovieList :movies="movies"/>
       <Footer/>
   </div>
@@ -14,6 +18,8 @@ import axios from 'axios'
 import MovieList from '@/components/MovieList.vue'
 import Cover from '@/components/Cover.vue'
 import Footer from '@/components/Footer.vue'
+import RecommendedList from '@/components/RecommendedList.vue'
+
 
 export default {
   name: 'home',
@@ -21,10 +27,12 @@ export default {
     MovieList,
     Cover,
     Footer
+    RecommendedList
   },
   data() {
     return {
       movies: [],
+      recommended: [],
     }
   },
   computed: {
@@ -44,12 +52,37 @@ export default {
           console.log(error)
         })
     },
+    getRecommendation() {
+      const conf = this.options
+      conf.user = this.user
+      axios.get('http://127.0.0.1:8000/api/v1/recommend', conf)
+        .then(response => {
+          console.log(response)
+          // this.recommended = JSON.parse(response.data)
+          this.recommended = response.data
+          console.log('추천받은 영화:', this.recommended)
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
     isLogined(){
       this.$session.start()
       if (this.$session.has('jwt')){
         this.$store.dispatch('login', this.$session.get('jwt'))
       }
-    }
+    },
+    // test() {
+    //   const config = this.options
+    //   config.user = this.user
+    //   axios.get('http://127.0.0.1:8000/api/v1/test/', config)
+    //     .then(response => {
+    //       console.log(response)
+    //     })
+    //     .catch(error => {
+    //       console.log(error)
+    //     })
+    // }
   },
   mounted() {
     this.isLogined()

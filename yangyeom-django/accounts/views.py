@@ -1,14 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model
-from .forms import CustomUserCreationForm
+# from .forms import CustomUserCreationForm
 from django.http import HttpResponse
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login as auth_login
-from django.contrib.auth import logout as auth_logout
-from django.contrib.auth.decorators import login_required
+# from django.contrib.auth import login as auth_login
+# from django.contrib.auth import logout as auth_logout
+# from django.contrib.auth.decorators import login_required
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
-from .models import User
+# from .models import User
 from movies.models import Movie, Review
 from django.db.models import Avg
 
@@ -34,30 +34,30 @@ def signup(request):
     if request.method == 'POST':
         user_check = get_user_model().objects.filter(username = request.data['username']).count()
         if user_check == 0:
-            User.objects.create_user(username=request.data['username'], password=request.data['password'])
+            get_user_model().objects.create_user(username=request.data['username'], password=request.data['password'])
             return HttpResponse('Saved', status=201)
     return HttpResponse('Unauthorized', status=401)
 
-def login(request):
-    if request.user.is_authenticated:
-        return redirect('accounts:index')  # 홈화면으로 돌리기
-    if request.method == 'POST':
-        form = AuthenticationForm(request, request.POST)
-        if form.is_valid():
-            auth_login(request, form.get_user())
-            return redirect(request.GET.get('next') or 'accounts:index')  # 홈 화면으로 돌리기
-    else:
-        form = AuthenticationForm()
-    context = {
-        'form': form
-    }
-    return render(request, 'accounts/form.html', context)
+# def login(request):
+#     if request.user.is_authenticated:
+#         return redirect('accounts:index')  # 홈화면으로 돌리기
+#     if request.method == 'POST':
+#         form = AuthenticationForm(request, request.POST)
+#         if form.is_valid():
+#             auth_login(request, form.get_user())
+#             return redirect(request.GET.get('next') or 'accounts:index')  # 홈 화면으로 돌리기
+#     else:
+#         form = AuthenticationForm()
+#     context = {
+#         'form': form
+#     }
+#     return render(request, 'accounts/form.html', context)
 
-def logout(request):
-    auth_logout(request)
-    return redirect('accounts:index')  # 홈화면으로 돌리기
+# def logout(request):
+#     auth_logout(request)
+#     return redirect('accounts:index')  # 홈화면으로 돌리기
 
-@login_required
+# @login_required
 def follow(request, user_detail_pk):
     user_detail = get_object_or_404(get_user_model(), pk=user_detail_pk)
     user = request.user
@@ -94,5 +94,5 @@ def rating(request):
         # request.user.score_avg = rate_score / rate_cnt
         request.user.score_avg = Review.objects.filter(user=request.user).aggregate(Avg('score')).get('score__avg')
         request.user.save()
-            
+        
         return redirect('movies:index')

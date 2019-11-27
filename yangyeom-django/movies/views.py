@@ -7,11 +7,12 @@ from django.contrib.auth import get_user_model
 from accounts.models import Similarity
 from django.db.models import Avg
 
-from .models import Movie, Genre, Review
+from .models import Movie, Genre, Review, ScoresExpected
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
-from .serializers import MovieSerializers, ReviewSerializers
+from .serializers import MovieSerializers, ReviewSerializers, ScoresExpectedSerializers
 from rest_framework.response import Response
+from django.http import HttpResponse
 
 
 
@@ -71,7 +72,7 @@ def movies_rating(request):
 @permission_classes([AllowAny])
 def movie_reviews(request, movie_pk):
     if request.method == 'GET':
-        print('영화 정보 가져오기', request.user)
+        # print('영화 정보 가져오기', request.user)
         # rated = False
         reviews = Review.objects.filter(movie_id=movie_pk)
         # for review in reviews:
@@ -87,12 +88,15 @@ def movie_reviews(request, movie_pk):
         serializer = ReviewSerializers(data=request.data)
         if serializer.is_valid(raise_exception=True):
             review = serializer.save()
+            rated_before = ScoresExpected.objects.filter(user=request.user, movie=review.movie)
+            if rated_before.count() != 0:
+                rated_before[0].delete()
             request.user.score_avg = Review.objects.filter(user=request.user).aggregate(Avg('score')).get('score__avg')
             request.user.save()
-            print(request.user.username,'의 평가한 영화개수:', Review.objects.filter(user=request.user).count())
-            print(request.user.username,'의 평가평균점수:',request.user.score_avg)
+            # print(request.user.username,'의 평가한 영화개수:', Review.objects.filter(user=request.user).count())
+            # print(request.user.username,'의 평가평균점수:',request.user.score_avg)
             # review.movie.watched_users.add(review.user)
-            print('요청 보내짐')
+            # print('요청 보내짐')
             return Response(serializer.data)
 
 
@@ -105,14 +109,14 @@ def review_update_delete(request, movie_pk, review_pk):
         if request.method == 'PUT':
             pass
         else:
-            print('요청받음')
-            print(request.user)
+            # print('요청받음')
+            # print(request.user)
             request.user.score_avg = Review.objects.filter(user=request.user).aggregate(Avg('score')).get('score__avg')
             request.user.save()
             review.delete()
-            print(request.user.username,'의 평가한 영화개수:', Review.objects.filter(user=request.user).count())
-            print(request.user.username,'의 평가평균점수:',request.user.score_avg)
-            
+            # print(request.user.username,'의 평가한 영화개수:', Review.objects.filter(user=request.user).count())
+            # print(request.user.username,'의 평가평균점수:',request.user.score_avg)
+            # 삭제되면 예상 평점 계산해주어야 함!!!!!!!!!!
             return Response('삭제되었습니다')
     else:
         return Response('리뷰 작성자가 아닙니다.')
@@ -148,7 +152,7 @@ def review_update_delete(request, movie_pk, review_pk):
 #     return redirect('movies:detail', movie_pk)
 
 
-@login_required
+
 def like(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
     if request.user in movie.like_users.all():
@@ -157,8 +161,9 @@ def like(request, movie_pk):
         movie.like_users.add(request.user)
     return redirect('movies:detail', movie_pk)
 
-@login_required
+@api_view(['GET'])
 def evaluate_Simi(request):  # 가입할 때마다!
+    print('****유사도 계산 시작! id는', request.user)
     user_now = request.user
     for user in get_user_model().objects.all():
         if user == user_now: continue
@@ -166,7 +171,7 @@ def evaluate_Simi(request):  # 가입할 때마다!
         for movie in user.watched_movies.all():
             if movie in user_now.watched_movies.all():
                 cnt_same_movie += 1
-        if cnt_same_movie >= 3:
+        if cnt_same_movie >= 3:  # 정확도 높이려면 숫자 더 크게하기
             numerator = 0; sigma_user = 0; sigma_user_now = 0
             for movie in user.watched_movies.all():
                 if movie in user_now.watched_movies.all():
@@ -176,25 +181,48 @@ def evaluate_Simi(request):  # 가입할 때마다!
                     sigma_user_now += (Review.objects.filter(movie=movie, user=user_now)[0].score - user_now.score_avg) ** 2
             sigma_user = sqrt(sigma_user); sigma_user_now = sqrt(sigma_user_now)
             similarity = numerator / (sigma_user * sigma_user_now)
+            # 중복되는거 삭제
+            previous_simil = Similarity.objects.filter(reference_user=user_now, similar_user=user)
+            if previous_simil.count():
+                previous_simil[0].delete()
+                Similarity.objects.filter(reference_user=user, similar_user=user_now)[0].delete()
             Similarity.objects.create(reference_user=user_now, similar_user=user, similarity=similarity)
             Similarity.objects.create(reference_user=user, similar_user=user_now, similarity=similarity)
+    print('*******유사도 계산 끝*******')
+    return HttpResponse('유사도 계산 끝')
 
+# @api_view(['GET'])
+# def test(request):
+#     print(request.user)
+#     return Response(request.GET)
 
-@login_required
+@api_view(['GET'])
 def recommend(request):
+    print('******영화추천 시작******')
     user_now = request.user
-    movies_recom = []
+    # movies_recom = []
     for movie in Movie.objects.all():
         if movie in user_now.watched_movies.all(): continue
         score_expected = 0; summ_similarity = 0
-        for user in get_user_model():
+        for user in get_user_model().objects.all():
             if user == user_now: continue
             if movie in user.watched_movies.all():
-                similarity = Similarity.objects.filter(reference_user=user_now, similar_user=user).similarity
-                if similarity > 0:
-                    summ_similarity += similarity
-                    score_expected += similarity * Review.objects.filter(user=user, movie=movie).score
-        score_expected /= summ_similarity
-        movies_rocom.append((movie, score_expected))
-    movies.sort(key=lambda x: x[1], reverse=True)
-    return movies[:10]
+                similarity = Similarity.objects.filter(reference_user=user_now, similar_user=user)
+                if similarity.count() != 0:
+                    similarity = similarity[0].similarity
+                    if similarity > 0:
+                        summ_similarity += similarity
+                        score_expected += similarity * Review.objects.filter(user=user, movie=movie)[0].score
+        if summ_similarity != 0:
+            # movie.score_expected = score_expected / summ_similarity
+            prev = ScoresExpected.objects.filter(user=user_now, movie=movie)
+            if prev.count() != 0:
+                prev[0].delete()
+            ScoresExpected.objects.create(user=user_now, movie=movie, score=round(score_expected / summ_similarity,2))
+            # request.user.scoresexpected_set.order_by('-score')
+    #     movies_recom.append([movie, score_expected])
+    # movies_recom.sort(key=lambda x: x[1], reverse=True)
+    # movies_recom = [movie[0] for movie in movies_recom[:7]]
+    
+    print('******영화추천 끝******')
+    return Response(ScoresExpectedSerializers(request.user.scoresexpected_set.order_by('-score')[:7], many=True).data)

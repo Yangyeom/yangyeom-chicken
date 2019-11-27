@@ -6,6 +6,7 @@ import VueAwesomeSwiper from 'vue-awesome-swiper'
 Vue.use(Vuex)
 Vue.use(VueAwesomeSwiper)
 
+
 export default new Vuex.Store({
   // state: {
   // },
