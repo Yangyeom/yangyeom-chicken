@@ -9,9 +9,9 @@ from django.contrib.auth.decorators import login_required
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
 from .models import User
-from movies.models import Review
 from movies.models import Movie, Review
 from django.db.models import Avg
+
 
 def index(request):
     context = {
@@ -92,7 +92,7 @@ def rating(request):
             review.save()
         # request.user.score_total = rate_score
         # request.user.score_avg = rate_score / rate_cnt
-        request.user.score_Avg = Review.objects.filter(user=request.user).aggregate(Avg('score')).get('score_avg')
+        request.user.score_avg = Review.objects.filter(user=request.user).aggregate(Avg('score')).get('score__avg')
         request.user.save()
             
         return redirect('movies:index')

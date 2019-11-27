@@ -5,12 +5,14 @@ from .forms import ReviewForm
 from math import sqrt
 from django.contrib.auth import get_user_model
 from accounts.models import Similarity
+from django.db.models import Avg
 
 from .models import Movie, Genre, Review
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from .serializers import MovieSerializers, ReviewSerializers
 from rest_framework.response import Response
+
 
 
 # def index(request):
@@ -63,12 +65,14 @@ def movies_rating(request):
 #             serializers.save()
 #             return Response(serializers.data)
 
+
+
 @api_view(['GET', 'POST'])
 @permission_classes([AllowAny])
 def movie_reviews(request, movie_pk):
     if request.method == 'GET':
         print('영화 정보 가져오기', request.user)
-        rated = False
+        # rated = False
         reviews = Review.objects.filter(movie_id=movie_pk)
         # for review in reviews:
         #     if request.user == review.user:
@@ -83,7 +87,11 @@ def movie_reviews(request, movie_pk):
         serializer = ReviewSerializers(data=request.data)
         if serializer.is_valid(raise_exception=True):
             review = serializer.save()
-            review.movie.watched_users.add(review.user)
+            request.user.score_avg = Review.objects.filter(user=request.user).aggregate(Avg('score')).get('score__avg')
+            request.user.save()
+            print(request.user.username,'의 평가한 영화개수:', Review.objects.filter(user=request.user).count())
+            print(request.user.username,'의 평가평균점수:',request.user.score_avg)
+            # review.movie.watched_users.add(review.user)
             print('요청 보내짐')
             return Response(serializer.data)
 
@@ -99,40 +107,45 @@ def review_update_delete(request, movie_pk, review_pk):
         else:
             print('요청받음')
             print(request.user)
-            
+            request.user.score_avg = Review.objects.filter(user=request.user).aggregate(Avg('score')).get('score__avg')
+            request.user.save()
             review.delete()
+            print(request.user.username,'의 평가한 영화개수:', Review.objects.filter(user=request.user).count())
+            print(request.user.username,'의 평가평균점수:',request.user.score_avg)
+            
             return Response('삭제되었습니다')
     else:
         return Response('리뷰 작성자가 아닙니다.')
 
 
-@login_required
-def review_create(request, movie_pk):
-    movie = get_object_or_404(Movie, pk=movie_pk)
-    if request.method == 'POST':
-        form = ReviewForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.user = request.user
-            comment.movie = movie
-            comment.save()
-            movie.score_sum += comment.score
-            movie.score_avg = round(movie.score_sum / max(movie.review_set.count(), 1), 2)
-            movie.save()
-            return redirect('movies:detail', movie_pk)
-        else:
-            return redirect('movies.detail', movie_pk)
+# @login_required
+# def review_create(request, movie_pk):
+#     movie = get_object_or_404(Movie, pk=movie_pk)
+#     if request.method == 'POST':
+#         form = ReviewForm(request.POST)
+#         if form.is_valid():
+#             comment = form.save(commit=False)
+#             comment.user = request.user
+#             comment.movie = movie
+#             comment.save()
+#             movie.score_sum += comment.score
+#             movie.score_avg = round(movie.score_sum / max(movie.review_set.count(), 1), 2)
+            
+#             movie.save()
+#             return redirect('movies:detail', movie_pk)
+#         else:
+#             return redirect('movies.detail', movie_pk)
 
 
-def review_delete(request, movie_pk, review_pk):
-    review = Review.objects.get(pk=review_pk)
-    if request.user == review.user: 
-        movie = Movie.objects.get(pk=movie_pk)
-        movie.score_sum -= review.score
-        review.delete()
-        movie.score_avg = round(movie.score_sum / max(movie.review_set.count(), 1), 2)
-        movie.save()
-    return redirect('movies:detail', movie_pk)
+# def review_delete(request, movie_pk, review_pk):
+#     review = Review.objects.get(pk=review_pk)
+#     if request.user == review.user: 
+#         movie = Movie.objects.get(pk=movie_pk)
+#         movie.score_sum -= review.score
+#         review.delete()
+#         movie.score_avg = round(movie.score_sum / max(movie.review_set.count(), 1), 2)
+#         movie.save()
+#     return redirect('movies:detail', movie_pk)
 
 
 @login_required
