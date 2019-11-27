@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <MovieList :movies="movies"/>
+      <MovieList :movies="movies"/>
   </div>
 </template>
 
@@ -10,7 +10,6 @@ import { mapGetters } from 'vuex'
 // import router from '../router'
 import axios from 'axios'
 import MovieList from '@/components/MovieList.vue'
-
 
 export default {
   name: 'home',
