@@ -21,9 +21,9 @@ export default {
       required: true,
     }
   },
-  data () {
-    return {
-      poster_url: `http://image.tmdb.org/t/p/w500/${this.movie.poster_url}`
+  computed: {
+    poster_url() {
+      return `http://image.tmdb.org/t/p/w500/${this.movie.poster_url}`
     }
   },
   methods: {
