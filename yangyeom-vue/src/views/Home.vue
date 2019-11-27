@@ -1,7 +1,8 @@
 <template>
   <div class="home">
     <button @click="getRecommendation">테스트</button>
-      <MovieList :movies="recommended"/>
+      <RecommendedList :recommended="recommended"/>
+      <h1>위에꺼가 추천받은거</h1>
       <MovieList :movies="movies"/>
       
   </div>
@@ -13,11 +14,13 @@ import { mapGetters } from 'vuex'
 // import router from '../router'
 import axios from 'axios'
 import MovieList from '@/components/MovieList.vue'
+import RecommendedList from '@/components/RecommendedList.vue'
 
 export default {
   name: 'home',
   components: {
-    MovieList
+    MovieList,
+    RecommendedList
   },
   data() {
     return {
@@ -48,7 +51,9 @@ export default {
       axios.get('http://127.0.0.1:8000/api/v1/recommend', conf)
         .then(response => {
           console.log(response)
+          // this.recommended = JSON.parse(response.data)
           this.recommended = response.data
+          console.log('추천받은 영화:', this.recommended)
         })
         .catch(error => {
           console.log(error)
