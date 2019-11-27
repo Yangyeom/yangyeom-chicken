@@ -11,7 +11,7 @@ from rest_framework.decorators import api_view, permission_classes
 from .models import User
 from movies.models import Review
 from movies.models import Movie, Review
-
+from django.db.models import Avg
 
 def index(request):
     context = {
@@ -85,13 +85,14 @@ def rating(request):
                 continue
             if request.POST[k] == '0':
                 continue
-            rate_score += int(request.POST[k])
-            rate_cnt += 1
+            # rate_score += int(request.POST[k])
+            # rate_cnt += 1
             movie = get_object_or_404(Movie, pk=k)
             review = Review(user=request.user, movie=movie, score=request.POST[k])
             review.save()
-        request.user.score_total = rate_score
-        request.user.score_avg = rate_score / rate_cnt
+        # request.user.score_total = rate_score
+        # request.user.score_avg = rate_score / rate_cnt
+        request.user.score_Avg = Review.objects.filter(user=request.user).aggregate(Avg('score')).get('score_avg')
         request.user.save()
             
         return redirect('movies:index')
