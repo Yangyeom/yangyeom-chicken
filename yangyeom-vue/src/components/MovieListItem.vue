@@ -1,8 +1,7 @@
 <template>
-  <div class="my-3">
-    <img class="movie--poster my-3" :src="poster_url" :alt="movie.name" style="height:100%;width:100%">
-    <h3>{{ movie.name }}</h3>
-    <button @click="test" class="btn btn-primary" data-toggle="modal" :data-target="'#movie-' + movie.code">영화 정보 상세보기</button>
+  <div class="text-center">
+    <img class="movie--poster my-3" :src="poster_url" :alt="movie.name" style="height:30%;width:80%"><br>
+    <button @click="test" class="btn btn-dark" data-toggle="modal" :data-target="'#movie-' + movie.code">상세보기</button>
     <MovieListItemModal :movie="movie"/>
   </div>
 </template>
@@ -13,13 +12,13 @@ import MovieListItemModal from '@/components/MovieListItemModal.vue'
 export default {
   name: 'MovieListItem',
   components: {
-      MovieListItemModal
+      MovieListItemModal,
   },
   props:{
     movie: {
       type: Object,
       required: true,
-    }
+    },
   },
   data () {
     return {

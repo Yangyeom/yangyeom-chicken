@@ -1,19 +1,34 @@
 <template>
   <div class="container">
-    <!-- 
-      form에 이벤트 리스너 달아서,
-      1) 사용자 입력 값 출력
-      2) /api-token-auth/로 요청 보내서 토큰 값 출력
-    -->
-    <form @submit.prevent="login">
-        <label for="username">username: </label>
-        <input v-model="credentials.username" type="text" id="username"><br>
-        <label for="password">password: </label>
-        <input v-model="credentials.password" type="password" id="password"><br>
-        <button class="btn btn-primary" type="submit">로그인</button>
-    </form>
-
-  </div>
+	<div class="d-flex justify-content-center h-100">
+		<div class="card">
+			<div class="card-header">
+				<h3>로그인</h3>
+			</div>
+				<form @submit.prevent="login">
+			<div class="card-body">
+					<div class="input-group form-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="fas fa-user"></i></span>
+						</div> 
+            <input v-model="credentials.username" placeholder="ID" type="text" id="username"><br>
+					</div>
+					<div class="input-group form-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="fas fa-key"></i></span>
+						</div>
+        <input v-model="credentials.password" placeholder="password" type="password" id="password"><br>
+					</div>
+			</div>
+			<div class="card-footer">
+          <div class="form-group">
+						<input type="submit" value="Login" class="btn float-center login_btn">
+					</div>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
 </template>
 
 <script>

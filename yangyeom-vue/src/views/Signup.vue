@@ -1,6 +1,5 @@
 <template>
-  <div class="signup">
-      <h2>회원가입</h2>
+  <div class="signup" style="margin-top:200px">
       <SignupForm @signup-event="signup"/>
   </div>
 </template>

@@ -1,6 +1,8 @@
 <template>
   <div class="home">
+      <Cover/>
       <MovieList :movies="movies"/>
+      <Footer/>
   </div>
 </template>
 
@@ -10,11 +12,15 @@ import { mapGetters } from 'vuex'
 // import router from '../router'
 import axios from 'axios'
 import MovieList from '@/components/MovieList.vue'
+import Cover from '@/components/Cover.vue'
+import Footer from '@/components/Footer.vue'
 
 export default {
   name: 'home',
   components: {
     MovieList,
+    Cover,
+    Footer
   },
   data() {
     return {
