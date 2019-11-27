@@ -127,7 +127,7 @@ export default {
     conf.user = this.user
     // console.log('유저', this.user)
     // console.log('리뷰 가져올 때 conf', conf)
-      axios.get(`http://127.0.0.1:8000/api/v1/movie/${this.movie.code}/reviews/`, conf)
+      axios.get(`http://127.0.0.1:8000/api/v1/movie/${this.movie.code}/reviews/`)
         .then(response => {
             this.reviews = response.data
             // this.myReview = this.reviews.filter(review => review.user === this.user)
