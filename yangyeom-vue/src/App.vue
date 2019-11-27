@@ -1,7 +1,7 @@
 <template>
   <!-- Navigation -->
   <div id="app">
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav" style="background-color:black">
       <div class="container">
         <router-link to="/" class="navbar-brand js-scroll-trigger">Coke</router-link>
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
