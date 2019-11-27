@@ -1,10 +1,12 @@
 <template>
   <div class="home">
-    <button @click="getRecommendation">테스트</button>
+
+      <Cover/>
+      <button @click="getRecommendation">테스트</button>
       <RecommendedList :recommended="recommended"/>
       <h1>위에꺼가 추천받은거</h1>
       <MovieList :movies="movies"/>
-      
+      <Footer/>
   </div>
 </template>
 
@@ -14,12 +16,17 @@ import { mapGetters } from 'vuex'
 // import router from '../router'
 import axios from 'axios'
 import MovieList from '@/components/MovieList.vue'
+import Cover from '@/components/Cover.vue'
+import Footer from '@/components/Footer.vue'
 import RecommendedList from '@/components/RecommendedList.vue'
+
 
 export default {
   name: 'home',
   components: {
     MovieList,
+    Cover,
+    Footer
     RecommendedList
   },
   data() {

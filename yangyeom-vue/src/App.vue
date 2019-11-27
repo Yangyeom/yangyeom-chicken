@@ -1,23 +1,38 @@
 <template>
+  <!-- Navigation -->
   <div id="app">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
-        aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div>
-          <router-link to="/" class="nav-item">Home</router-link> |
-        </div>
-        <div v-if="!isAuthenticated">
-          <router-link to="/signup" class="nav-item">회원가입</router-link> |
-          <router-link to="/login" class="nav-item">로그인</router-link>
-        </div>
-        <div v-else>
-          <a @click.prevent="logout" href="" class="nav-item"> 로그아웃</a> |
-          <a @click.prevent="payment" href="" class="nav-item ">결제</a> |
-          <a @click.prevent="payment" href="" class="nav-item ">추천 받기</a> |
-        </div>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+      <div class="container">
+        <router-link to="/" class="navbar-brand js-scroll-trigger">Coke</router-link>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+          data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+          aria-label="Toggle navigation">
+          메뉴
+          <i class="fas fa-bars"></i>
+        </button>
+        <div v-if="!isAuthenticated" class="collapse navbar-collapse" id="navbarResponsive">
+              <ul class="navbar-nav text-uppercase ml-auto">
+              <li class="nav-item">
+                <a><router-link class="nav-link js-scroll-trigger" to="/signup">회원가입</router-link></a>
+              </li>
+              <li class="nav-item">
+                <a><router-link class="nav-link js-scroll-trigger" to="/login">로그인</router-link></a>
+              </li>
+              </ul>
+            </div>
+            <div v-else class="collapse navbar-collapse" id="navbarResponsive">
+              <ul class="navbar-nav text-uppercase ml-auto">
+              <li class="nav-item">
+                <a @click.prevent="logout" class="nav-link js-scroll-trigger" href="#contact">로그아웃</a>
+              </li>
+              <li class="nav-item">
+                <a @click.prevent="payment" class="nav-link js-scroll-trigger" href="#contact">결제</a>
+              </li>
+              <li class="nav-item">
+                <a @click.prevent="" class="nav-link js-scroll-trigger" href="#contact">추천 받기</a>
+              </li>
+              </ul>
+            </div>
       </div>
     </nav>
     <router-view />
@@ -31,6 +46,9 @@
   } from 'vuex'
   export default {
     name: 'App',
+    components: {
+
+    },
     computed: {
       ...mapGetters([
         'options',

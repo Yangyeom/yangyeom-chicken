@@ -16,9 +16,10 @@ class ReviewSerializers(serializers.ModelSerializer):
 
 
 class MovieSerializers(serializers.ModelSerializer):
+    review_set = ReviewSerializers(many=True)
     class Meta:
         model = Movie
-        fields = '__all__'
+        fields = ['code', 'title', 'poster_url', 'description', 'genres', 'like_users', 'watched_users', 'review_set']
 
 
 class GenreDetailSerializers(serializers.ModelSerializer):

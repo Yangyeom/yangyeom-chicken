@@ -25,7 +25,7 @@
           <hr>
         </div>
         <hr>
-        <div v-for="review in reviews" :key="review.id">
+        <div v-for="review in movie.review_set" :key="review.id">
           <!-- <div v-if="!writerCheck(review.user)"> -->
             <h4>{{review.score}}점/5.0점</h4>
             <h6>{{review.username}} | {{review.content}}</h6>
@@ -93,9 +93,9 @@ export default {
               user: response.data.user,
               id: response.data.id
             }
-            this.reviews.push(review)
+            this.movie.review_set.push(review)
             this.content_rating = ''
-            console.log('리뷰들', this.reviews)
+            console.log('리뷰들', this.movie.review_set)
           })
           .catch(error => {
             console.log(error)
@@ -109,7 +109,7 @@ export default {
       axios.delete(`http://127.0.0.1:8000/api/v1/movie/${this.movie.code}/reviews/${review_id}/`, conf)
         .then(response => {
             console.log(response)
-            this.reviews = this.reviews.filter(review => review.id !== review_id)
+            this.movie.review_set = this.movie.review_set.filter(review => review.id !== review_id)
         })
         .catch(error => {
             console.log(error)
@@ -127,18 +127,18 @@ export default {
     conf.user = this.user
     // console.log('유저', this.user)
     // console.log('리뷰 가져올 때 conf', conf)
-      axios.get(`http://127.0.0.1:8000/api/v1/movie/${this.movie.code}/reviews/`)
-        .then(response => {
-            this.reviews = response.data
-            // this.myReview = this.reviews.filter(review => review.user === this.user)
-            // if (this.myReview.length !== 0) {
-            //   this.ifIRated = true
-            //   console.log(this.movie.title,'에서내가 쓴 리뷰', this.myReview)
-            //   }
-        })
-        .catch(error => {
-            console.log(error)
-        })
+      // axios.get(`http://127.0.0.1:8000/api/v1/movie/${this.movie.code}/reviews/`)
+      //   .then(response => {
+      //       this.movie.review_set = response.data
+      //       // this.myReview = this.movie.review_set.filter(review => review.user === this.user)
+      //       // if (this.myReview.length !== 0) {
+      //       //   this.ifIRated = true
+      //       //   console.log(this.movie.title,'에서내가 쓴 리뷰', this.myReview)
+      //       //   }
+      //   })
+      //   .catch(error => {
+      //       console.log(error)
+      //   })
   },
   computed: {
     ...mapGetters([
@@ -147,10 +147,10 @@ export default {
     ]),
     ifIRated() {
       // console.log(this.movie.title, '에서 ifIRated', a)
-      return this.reviews.filter(review => review.user === this.user).length !== 0
+      return this.movie.review_set.filter(review => review.user === this.user).length !== 0
     },
     myReview() {
-      return this.reviews.filter(review => review.user === this.user)
+      return this.movie.review_set.filter(review => review.user === this.user)
     },
     reviewPlaceholder() {
       return this.isLogined? (this.ifIRated? '재평가하려면 리뷰를 삭제하세요': '평가해주세요') : '로그인해주세요'
@@ -164,5 +164,7 @@ export default {
 </script>
 
 <style>
-
+.modal-backdrop {
+  z-index: -1 !important;
+}
 </style>
