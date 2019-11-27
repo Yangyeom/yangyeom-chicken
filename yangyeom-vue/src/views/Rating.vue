@@ -8,6 +8,7 @@
 <script>
 import MovieRatingList from '@/components/MovieRatingList.vue'
 import axios from 'axios'
+import { mapGetters } from 'vuex'
 
 export default {
     name: 'home',
@@ -19,6 +20,12 @@ export default {
             movies: [],
             counter: 10,
         }
+    },
+    computed: {
+        ...mapGetters([
+        'options',
+        'user'
+        ])
     },
     methods: {
         getMovies(){
@@ -43,6 +50,16 @@ export default {
         counter: function () {
             if(this.counter === 0){
                 window.location.href = '/';
+                const conf = this.options
+                conf.user = this.user
+                axios.get('http://127.0.0.1:8000/api/v1/evaluatesimi/', conf) // 추천은 결제후. 유사도 계산은 평가할 때마다!
+                    .then(response => {
+                        console.log(response)
+                        console.log('유사도 계산하라고 했음')
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
             }
     }
   },
