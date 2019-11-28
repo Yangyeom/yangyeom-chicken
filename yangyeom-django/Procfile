@@ -1,0 +1,1 @@
+web: gunicorn yangyeomchicken.wsgi --log-file -
