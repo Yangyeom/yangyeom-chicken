@@ -24,7 +24,7 @@ def movies_index(request):
     """
     영화 정보
     """
-    movies = Movie.objects.all()
+    movies = Movie.objects.order_by('-score_avg').all()
     # for movie in movies:
     #     movie.score_avg = Review.objects.filter(movie=movie).aggregate(Avg('score')).get('score__avg')
     #     movie.save()
