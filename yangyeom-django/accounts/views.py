@@ -11,6 +11,8 @@ from rest_framework.decorators import api_view, permission_classes
 # from .models import User
 from movies.models import Movie, Review
 from django.db.models import Avg
+from .serializers import UserSerializers
+from rest_framework.response import Response
 
 
 def index(request):
@@ -19,11 +21,11 @@ def index(request):
     }
     return render(request, 'accounts/index.html', context)
 
+@api_view(['GET'])
 def detail(request, user_pk):
-    context = {
-        'user_detail' : get_user_model().objects.get(pk=user_pk)
-    }
-    return render(request, 'accounts/detail.html', context)
+    user = get_user_model().objects.get(pk=user_pk)
+    serializer = UserSerializers(user)
+    return Response(serializer.data)
 
 
 @api_view(['POST'])

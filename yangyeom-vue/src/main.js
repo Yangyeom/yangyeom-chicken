@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 Vue.use(VueSession)
 Vue.config.productionTip = false
+Vue.prototype.$EventBus = new Vue()
 
 new Vue({
   router,

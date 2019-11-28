@@ -2,7 +2,8 @@
   <div class="home">
       <Cover/>
       <!-- <button @click="getRecommendation">테스트</button> -->
-      <RecommendedList :recommended="recommended"/>
+      <RecommendedList v-if="done" :recommended="recommended"/>
+      <div style="height: 100px"></div>
       <MovieList :movies="movies"/>
       <MovieListItemModal v-for="movie in movies" :movie_="movie" :key="movie.code" />
       <Footer/>
@@ -34,6 +35,7 @@ export default {
     return {
       movies: [],
       recommended: [],
+      done: false
     }
   },
   computed: {
@@ -41,6 +43,11 @@ export default {
       'options',
       'user'
     ]),
+  },
+  created() {
+    this.$EventBus.$on('click-icon', () => {
+      this.getRecommendation()
+    })
   },
   methods: {
     getMovies(){
@@ -54,18 +61,35 @@ export default {
         })
     },
     getRecommendation() {
-      const conf = this.options
-      conf.user = this.user
-      axios.get('http://127.0.0.1:8000/api/v1/recommend', conf)
+      axios.get(`http://127.0.0.1:8000/accounts/${this.user}/`, this.options)
         .then(response => {
-          console.log(response)
-          // this.recommended = JSON.parse(response.data)
-          this.recommended = response.data
-          console.log('추천받은 영화:', this.recommended)
+          console.log('결제했는지', response.data.paid)
+          if (response.data.paid) {
+             const conf = this.options
+              conf.user = this.user
+             axios.get('http://127.0.0.1:8000/api/v1/recommend', conf)
+              .then(response => {
+                console.log(response)
+                // this.recommended = JSON.parse(response.data)
+                this.recommended = response.data
+                console.log('추천받은 영화:', this.recommended)
+                this.done = true
+              })
+          }
         })
-        .catch(error => {
-          console.log(error)
-        })
+      // const conf = this.options
+      // conf.user = this.user
+      
+      // axios.get('http://127.0.0.1:8000/api/v1/recommend', conf)
+      //   .then(response => {
+      //     console.log(response)
+      //     // this.recommended = JSON.parse(response.data)
+      //     this.recommended = response.data
+      //     console.log('추천받은 영화:', this.recommended)
+      //   })
+      //   .catch(error => {
+      //     console.log(error)
+      //   })
     },
     isLogined(){
       this.$session.start()
@@ -88,6 +112,17 @@ export default {
   mounted() {
     this.isLogined()
     this.getMovies()
+    this.done = false
+  },
+  watch: {
+    recommend: {
+      handler: function() {
+        console.log(this.recommend)
+        // if (this.recommend) {
+        //   this.getMovies()
+        // }
+      }
+    }
   }
 }
 </script>

@@ -29,7 +29,7 @@
                 <a @click.prevent="payment" class="nav-link js-scroll-trigger" href="#contact">결제</a>
               </li>
               <li class="nav-item">
-                <a @click.prevent="" class="nav-link js-scroll-trigger" href="#contact">추천 받기</a>
+                <a @click.prevent="$EventBus.$emit('click-icon')" class="nav-link js-scroll-trigger" href="#contact">추천 받기</a>
               </li>
               </ul>
             </div>
@@ -75,6 +75,13 @@
           .catch(error => {
             console.log(error)
           })
+      },
+      recommend() {
+        this.$router.push({
+            name: 'home', 
+            params: {'recommend': true}
+        });
+        console.log('보냄')
       }
     },
     updated() {
