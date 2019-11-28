@@ -15,7 +15,7 @@ class Movie(models.Model):
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_movies')
     watched_users = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Review', related_name='watched_movies')
     score_exp_users = models.ManyToManyField(settings.AUTH_USER_MODEL, through='ScoresExpected', related_name='score_exp_movies')
-    score_avg = models.IntegerField(default=0)
+    score_avg = models.FloatField(default=0)
 
 class Review(models.Model):
     content = models.CharField(max_length=100, blank=True)

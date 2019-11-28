@@ -3,7 +3,7 @@
   <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">{{ movie.title }}</h5>
+        <h5 class="modal-title">{{ movie.title }} | 평균 평점: {{ movie.score_avg }}점/5.0점</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -16,14 +16,15 @@
         <p>{{ movie.description }}</p>
       </div>
       <div class="modal-body">
-        <hr>
         <div v-if="ifIRated">
-          <h3>내가 쓴 리뷰</h3>
+          <hr>
+          <h3>나의 평가</h3>
           <h4>{{myReview[0].score}}점/5.0점</h4>
           <h6>{{myReview[0].username}} | {{myReview[0].content}}</h6>
           <button v-if="writerCheck(myReview[0].user)" @click="reviewDelete(myReview[0].id)">삭제</button>
-          <hr>
         </div>
+        <hr>
+        <h3>다른 사람들의 평가</h3>
         <hr>
         <div v-for="review in movie.review_set" :key="review.id">
           <!-- <div v-if="!writerCheck(review.user)"> -->
@@ -57,7 +58,7 @@ import StarRating from 'vue-star-rating'
 export default {
   name: 'movie-list-item-modal',
   props: {
-    movie: {
+    movie_: {
       type: Object,
       required: true,
     }
@@ -67,10 +68,11 @@ export default {
   },
   data() {
       return {
-        poster_url: `http://image.tmdb.org/t/p/w500/${this.movie.poster_url}`,
         reviews: [],
         content_rating: '',
         score_rating: 0,
+        movie: this.movie_,
+        poster_url: `http://image.tmdb.org/t/p/w500/${this.movie_.poster_url}`
       }
   },
   methods: {
@@ -86,14 +88,16 @@ export default {
         axios.post(`http://127.0.0.1:8000/api/v1/movie/${this.movie.code}/reviews/`, data, this.options)
           .then(response => {
             console.log(response)
-            const review = {
-              content: response.data.content,
-              score: response.data.score,
-              username: response.data.username,
-              user: response.data.user,
-              id: response.data.id
-            }
-            this.movie.review_set.push(review)
+            // const review = {
+            //   content: response.data.content,
+            //   score: response.data.score,
+            //   username: response.data.username,
+            //   user: response.data.user,
+            //   id: response.data.id
+            // }
+            // this.movie.review_set.push(review)
+            // this.reviews = response.data.review_set
+            this.movie = response.data
             this.content_rating = ''
             console.log('리뷰들', this.movie.review_set)
           })
@@ -109,7 +113,8 @@ export default {
       axios.delete(`http://127.0.0.1:8000/api/v1/movie/${this.movie.code}/reviews/${review_id}/`, conf)
         .then(response => {
             console.log(response)
-            this.movie.review_set = this.movie.review_set.filter(review => review.id !== review_id)
+            // this.movie.review_set = this.movie.review_set.filter(review => review.id !== review_id)
+            this.movie = response.data
         })
         .catch(error => {
             console.log(error)
@@ -158,8 +163,33 @@ export default {
     isLogined(){
       this.$session.start()
       return this.$session.has('jwt')
-    }
-  }
+    },
+    // score_aavg() {
+    //   axios.get(`http://127.0.0.1:8000/api/v1/movie/${this.movie.code}/`)
+    //     .then(response => {
+    //         console.log('??????????????', response)
+    //         this.movie = response.data
+    //         return 1
+    //     })
+    //     .catch(error => {
+    //         console.log(error)
+    //     })
+    // }
+  },
+  // watch: {
+  //   movie: {
+  //     handler: function() {
+  //     axios.get(`http://127.0.0.1:8000/api/v1/movie/${this.movie.code}/`)
+  //       .then(response => {
+  //           console.log('??????????????', response)
+  //           this.movie = response.data
+  //       })
+  //       .catch(error => {
+  //           console.log(error)
+  //       })
+  //     }
+  //   }
+  // }
 }
 </script>
 
