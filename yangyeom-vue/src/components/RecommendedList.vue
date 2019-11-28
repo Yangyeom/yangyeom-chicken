@@ -1,5 +1,5 @@
 <template>
-    <div v-if="user.paid" class="container flex-nowrap justify-content-center text-center shadow text-shadow my-5 py-5">
+    <div class="container flex-nowrap justify-content-center text-center shadow text-shadow mt-5 pt-5">
         <h1 style="color: white">추천 목록</h1>
         <div v-if="cnt !== 0" class="row">
             <div v-for="recom in recommended" :key="recom.id" class="col-3 flex-nowrap shadow">

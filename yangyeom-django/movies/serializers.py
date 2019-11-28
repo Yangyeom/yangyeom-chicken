@@ -30,11 +30,12 @@ class GenreDetailSerializers(serializers.ModelSerializer):
 
 
 class ScoresExpectedSerializers(serializers.ModelSerializer):
-    movie = MovieSerializers()
     username = serializers.CharField(read_only=True, source='user.username')
+    movie = MovieSerializers()
+    paid = serializers.BooleanField(read_only=True, source='user.paid')
     class Meta:
         model = ScoresExpected
-        fields = ['score', 'movie', 'user', 'movie', 'username']
+        fields = ['score', 'movie', 'user', 'movie', 'username', 'paid']
 
 class MovieDetailSerializers(serializers.ModelSerializer):
     reviews = ReviewSerializers(many=True)
