@@ -1,11 +1,10 @@
 <template>
   <div class="home">
       <Cover/>
-      <button @click="getRecommendation">테스트</button>
+      <!-- <button @click="getRecommendation">테스트</button> -->
       <RecommendedList :recommended="recommended"/>
-      <h1>위에꺼가 추천받은거</h1>
       <MovieList :movies="movies"/>
-      <MovieListItemModal v-for="movie in movies" :movie="movie" :key="movie.code"/>
+      <MovieListItemModal v-for="movie in movies" :movie_="movie" :key="movie.code" />
       <Footer/>
   </div>
 </template>
@@ -41,7 +40,7 @@ export default {
     ...mapGetters([
       'options',
       'user'
-    ])
+    ]),
   },
   methods: {
     getMovies(){

@@ -19,7 +19,7 @@ class MovieSerializers(serializers.ModelSerializer):
     review_set = ReviewSerializers(many=True)
     class Meta:
         model = Movie
-        fields = ['code', 'title', 'poster_url', 'description', 'genres', 'like_users', 'watched_users', 'review_set']
+        fields = ['code', 'title', 'poster_url', 'description', 'genres', 'like_users', 'watched_users', 'review_set', 'score_avg']
 
 
 class GenreDetailSerializers(serializers.ModelSerializer):
@@ -36,8 +36,8 @@ class ScoresExpectedSerializers(serializers.ModelSerializer):
         model = ScoresExpected
         fields = ['score', 'movie', 'user', 'movie', 'username']
 
-# class MovieDetailSerializers(serializers.ModelSerializer):
-#     reviews = ReviewSerializers(many=True)
-#     class Meta:
-#         fields = MovieSerializers.Meta.fields
-#         include = ['reviews']
+class MovieDetailSerializers(serializers.ModelSerializer):
+    reviews = ReviewSerializers(many=True)
+    class Meta:
+        fields = MovieSerializers.Meta.fields
+        include = ['reviews']

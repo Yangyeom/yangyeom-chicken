@@ -25,8 +25,21 @@ def movies_index(request):
     영화 정보
     """
     movies = Movie.objects.all()
+    # for movie in movies:
+    #     movie.score_avg = Review.objects.filter(movie=movie).aggregate(Avg('score')).get('score__avg')
+    #     movie.save()
     serializer = MovieSerializers(movies, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def movie_detail(request, movie_pk):
+    movie = Movie.objects.get(pk=movie_pk)
+    movie.score_avg = Review.objects.filter(movie=movie).aggregate(Avg('score')).get('score__avg')
+    movie.save()
+    serializer = MovieSerializers(movie)
+    return Response(serializer.data)
+
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -93,11 +106,13 @@ def movie_reviews(request, movie_pk):
                 rated_before[0].delete()
             request.user.score_avg = Review.objects.filter(user=request.user).aggregate(Avg('score')).get('score__avg')
             request.user.save()
+            review.movie.score_avg = round(Review.objects.filter(movie=review.movie).aggregate(Avg('score')).get('score__avg'), 2)
+            review.movie.save()
             # print(request.user.username,'의 평가한 영화개수:', Review.objects.filter(user=request.user).count())
             # print(request.user.username,'의 평가평균점수:',request.user.score_avg)
             # review.movie.watched_users.add(review.user)
             # print('요청 보내짐')
-            return Response(serializer.data)
+            return Response(MovieSerializers(review.movie).data)
 
 
 @api_view(['PUT', 'DELETE'])
@@ -113,11 +128,13 @@ def review_update_delete(request, movie_pk, review_pk):
             # print(request.user)
             request.user.score_avg = Review.objects.filter(user=request.user).aggregate(Avg('score')).get('score__avg')
             request.user.save()
+            review.movie.score_avg = round(Review.objects.filter(movie=review.movie).aggregate(Avg('score')).get('score__avg'), 2)
+            review.movie.save()
             review.delete()
             # print(request.user.username,'의 평가한 영화개수:', Review.objects.filter(user=request.user).count())
             # print(request.user.username,'의 평가평균점수:',request.user.score_avg)
             # 삭제되면 예상 평점 계산해주어야 함!!!!!!!!!!
-            return Response('삭제되었습니다')
+            return Response(MovieSerializers(review.movie).data)
     else:
         return Response('리뷰 작성자가 아닙니다.')
 
@@ -225,4 +242,4 @@ def recommend(request):
     # movies_recom = [movie[0] for movie in movies_recom[:7]]
     
     print('******영화추천 끝******')
-    return Response(ScoresExpectedSerializers(request.user.scoresexpected_set.order_by('-score')[:7], many=True).data)
+    return Response(ScoresExpectedSerializers(request.user.scoresexpected_set.filter(score__gt=0).order_by('-score')[:9], many=True).data)
